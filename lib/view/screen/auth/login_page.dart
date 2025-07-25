@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mycafe/service/auth_service.dart';
 import 'register_page.dart';
-import '../dashboard/dashboard_page.dart';
 import 'reset_password_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -26,62 +25,53 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
+  // --- _login ---
+Future<void> _login() async {
+  if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+  setState(() {
+    _isLoading = true;
+  });
 
-    try {
-      await authService.value.signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+  try {
+    await authService.value.signIn(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login berhasil!'),
+          backgroundColor: Colors.green,
+        ),
       );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login berhasil!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        // Navigate to dashboard
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const DashboardPage()),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      String errorMessage = 'Terjadi kesalahan';
-      if (e.code == 'user-not-found') {
-        errorMessage = 'Email tidak ditemukan';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Password salah';
-      } else if (e.code == 'invalid-email') {
-        errorMessage = 'Format email tidak valid';
-      } else if (e.code == 'user-disabled') {
-        errorMessage = 'Akun telah dinonaktifkan';
-      } else if (e.code == 'too-many-requests') {
-        errorMessage = 'Terlalu banyak percobaan, coba lagi nanti';
-      } else if (e.code == 'invalid-credential') {
-        errorMessage = 'Email atau password salah';
-      }
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+    }
+  } on FirebaseAuthException catch (e) {
+    String errorMessage = 'Terjadi kesalahan';
+    if (e.code == 'user-not-found') {
+      errorMessage = 'Email tidak ditemukan';
+    } else if (e.code == 'wrong-password') {
+      errorMessage = 'Password salah';
+    } else if (e.code == 'invalid-credential') {
+      errorMessage = 'Email atau password salah';
+    }
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } finally {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

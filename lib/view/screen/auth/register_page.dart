@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mycafe/service/auth_service.dart';
-import '../dashboard/dashboard_page.dart';
-
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -27,73 +25,55 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  Future<void> _register() async {
-    if (!_formKey.currentState!.validate()) return;
+// --- _register ---
+Future<void> _register() async {
+  if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+  setState(() {
+    _isLoading = true;
+  });
 
-    try {
-      await authService.value.createAccount(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+  try {
+    await authService.value.createAccount(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Akun berhasil dibuat!'),
+          backgroundColor: Colors.green,
+        ),
       );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Akun berhasil dibuat!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        // Navigate to dashboard
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const DashboardPage()),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      print('FirebaseAuthException: ${e.code} - ${e.message}'); // Debug log
-      String errorMessage = 'Terjadi kesalahan';
-      if (e.code == 'weak-password') {
-        errorMessage = 'Password terlalu lemah';
-      } else if (e.code == 'email-already-in-use') {
-        errorMessage = 'Email sudah digunakan';
-      } else if (e.code == 'invalid-email') {
-        errorMessage = 'Format email tidak valid';
-      } else if (e.code == 'operation-not-allowed') {
-        errorMessage = 'Operasi tidak diizinkan';
-      } else if (e.code == 'too-many-requests') {
-        errorMessage = 'Terlalu banyak percobaan, coba lagi nanti';
-      } else {
-        errorMessage = 'Error: ${e.message}';
-      }
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      print('General error: $e'); // Debug log
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error tidak terduga: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      // Hapus navigasi manual dari sini
+      // Navigator.of(context).pushReplacement(...);
+    }
+  } on FirebaseAuthException catch (e) {
+    String errorMessage = 'Terjadi kesalahan';
+    if (e.code == 'weak-password') {
+      errorMessage = 'Password terlalu lemah';
+    } else if (e.code == 'email-already-in-use') {
+      errorMessage = 'Email sudah digunakan';
+    } else if (e.code == 'invalid-email') {
+      errorMessage = 'Format email tidak valid';
+    }
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } finally {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

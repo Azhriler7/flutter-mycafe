@@ -6,8 +6,8 @@ import '../auth/update_username_page.dart';
 import '../auth/reset_password_page.dart';
 import '../auth/delete_account_page.dart';
 
-class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+class AdminDashboardPage extends StatelessWidget {
+  const AdminDashboardPage({super.key});
 
   Future<void> _signOut(BuildContext context) async {
     try {
@@ -40,7 +40,7 @@ class DashboardPage extends StatelessWidget {
         backgroundColor: const Color(0xFF1A1A1A),
         elevation: 0,
         title: const Text(
-          'Dashboard',
+          'Dashboard - Admin',
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,

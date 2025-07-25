@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'login_page.dart';
-import '../dashboard/dashboard_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mycafe/service/auth_service.dart';
+import 'package:mycafe/view/screen/auth/login_page.dart';
+import 'package:mycafe/view/screen/admin/admin_dashboard_page.dart';
+import 'package:mycafe/view/screen/user/user_dashboard_page.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -11,25 +13,43 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: authService.value.userChanges,
-      builder: (context, snapshot) {
-        // Tampilkan loading saat menunggu status auth
-        if (snapshot.connectionState == ConnectionState.waiting) {
+      builder: (context, authSnapshot) {
+        if (authSnapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            backgroundColor: Color(0xFF1A1A1A),
-            body: Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF4CAF50),
-              ),
-            ),
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (authSnapshot.hasData && authSnapshot.data != null) {
+          final user = authSnapshot.data!;
+
+          return StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .snapshots(), // .snapshots() bersifat realtime
+            builder: (context, userDocSnapshot) {
+              if (userDocSnapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (!userDocSnapshot.hasData || !userDocSnapshot.data!.exists) {
+                return const UserDashboardPage();
+              }
+
+              final userData = userDocSnapshot.data!.data() as Map<String, dynamic>;
+              
+              if (userData['isAdmin'] == true) {
+                return const AdminDashboardPage();
+              } else {
+                return const UserDashboardPage();
+              }
+            },
           );
         }
         
-        // Jika user sudah login, tampilkan dashboard
-        if (snapshot.hasData && snapshot.data != null) {
-          return const DashboardPage();
-        }
-        
-        // Jika user belum login, tampilkan halaman login
         return const LoginPage();
       },
     );
