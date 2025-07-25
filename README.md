@@ -1,39 +1,36 @@
-# My Cafe ☕
+# Aplikasi My Cafe (Android & Web) ☕
 
 Aplikasi pemesanan untuk kafe yang dibangun menggunakan Flutter dan Firebase. Proyek ini dirancang untuk platform **Android** dan **Web**.
 
-Aplikasi ini memiliki sistem menu ganda: menu utama yang statis (disertakan dalam aset aplikasi) untuk kecepatan dan keandalan, serta menu info/promo dinamis yang dapat dikelola oleh admin. Alur pembayaran disederhanakan dengan verifikasi manual oleh staf di meja pelanggan.
+Aplikasi ini memiliki sistem menu dinamis yang dikelola oleh admin dan alur pembayaran yang disederhanakan dengan verifikasi manual oleh staf di meja pelanggan.
 
 ---
 
 ## Daftar Isi
-1.  [Alur Kerja Aplikasi](#alur-kerja-aplikasi)
+1.  [Daftar Halaman Aplikasi](#daftar-halaman-aplikasi)
 2.  [Persiapan & Instalasi](#persiapan--instalasi)
-3.  [Struktur Database (Firestore)](#struktur-database-firestore)
-4.  [Struktur Aset Aplikasi](#struktur-aset-aplikasi)
+3.  [Alur Kerja Git & Kontribusi Kode](#alur-kerja-git--kontribusi-kode)
+4.  [Struktur Database (Firestore)](#struktur-database-firestore)
 5.  [Arsitektur & State Management](#arsitektur--state-management)
 
 ---
 
-## Alur Kerja Aplikasi
+## Daftar Halaman Aplikasi
 
-Aplikasi ini memiliki dua peran utama: **Pelanggan** dan **Admin**.
+Berikut adalah rincian halaman yang akan dibuat untuk masing-masing peran.
 
-### Alur Pelanggan
-1.  **Autentikasi:** Pengguna harus mendaftar (Register) atau masuk (Login) dengan **Email/Password**. Fitur Lupa Password dan Hapus Akun tersedia di halaman profil.
-2.  **Dashboard (Menu Utama):** Setelah login, pengguna melihat halaman utama yang menampilkan **Menu Utama Kafe**. Menu ini (beserta gambar, harga, dan deskripsi) diambil dari aset lokal aplikasi.
-3.  **Keranjang:** Pengguna dapat menambahkan item dari Menu Utama ke keranjang belanja.
-4.  **Pesan & Bayar:**
-    * Setelah selesai, pengguna menekan tombol "Pesan".
-    * Aplikasi akan langsung mengirim pesanan ke sistem admin.
-    * Secara bersamaan, layar pengguna akan menampilkan **QRIS statis** milik kafe beserta total tagihan. Pelanggan diharapkan membayar secara mandiri menggunakan aplikasi pembayaran mereka.
-5.  **Menu Lainnya:** Pengguna dapat mengakses halaman terpisah yang berisi info, pengumuman, atau promo spesial yang dikelola oleh admin.
+### Halaman Sisi Pelanggan (User)
+1.  **Layar Autentikasi:** Mencakup halaman Login, Register, dan Lupa Password.
+2.  **Dashboard Menu:** Halaman utama yang menampilkan semua item menu dari Firestore.
+3.  **Keranjang Belanja:** Halaman untuk melihat ringkasan item yang dipilih sebelum memesan.
+4.  **Layar Pembayaran:** Halaman yang muncul setelah memesan, menampilkan QRIS statis toko dan total tagihan.
+5.  **Profil Pengguna:** Halaman untuk mengelola data pribadi, serta fitur Logout dan Hapus Akun.
 
-### Alur Admin
-1.  **Login Admin:** Admin masuk menggunakan akun khusus.
-2.  **Lihat Pesanan Masuk:** Admin melihat daftar pesanan yang baru masuk secara *real-time*.
-3.  **Proses Pesanan & Verifikasi Manual:** Staf menyiapkan pesanan, mengantarkannya ke meja, lalu meminta untuk melihat bukti pembayaran di ponsel pelanggan. **Tidak ada proses verifikasi di dalam aplikasi.**
-4.  **CRUD Menu Lainnya:** Admin memiliki panel khusus untuk membuat, mengubah, atau menghapus konten di halaman "Menu Lainnya".
+### Halaman Sisi Admin
+1.  **Dashboard Admin:** Halaman utama yang menampilkan daftar pesanan masuk (`pesanan` baru) secara *real-time*.
+2.  **Detail Pesanan:** Halaman yang menampilkan rincian lengkap dari sebuah pesanan yang dipilih.
+3.  **Manajemen Menu (CRUD):** Satu set halaman atau dialog untuk menambah, mengubah, dan menghapus item di koleksi `menu`.
+4.  **Profil Admin:** Halaman sederhana untuk admin melakukan Logout.
 
 ---
 
@@ -46,12 +43,10 @@ Pastikan Anda sudah menginstal Flutter SDK (versi 3.x.x atau lebih baru).
     ```bash
     git clone [https://github.com/NAMA_USER_ANDA/nama-repo-anda.git](https://github.com/NAMA_USER_ANDA/nama-repo-anda.git)
     ```
-
 2.  **Masuk ke direktori proyek:**
     ```bash
     cd nama-repo-anda
     ```
-
 3.  **Setup Firebase:**
     * Proyek ini menggunakan Firebase. File konfigurasi `google-services.json` **tidak disertakan** di repository.
     * Setiap anggota tim harus membuat proyek Firebase sendiri untuk development.
@@ -62,68 +57,54 @@ Pastikan Anda sudah menginstal Flutter SDK (versi 3.x.x atau lebih baru).
     ```bash
     flutter pub get
     ```
-
 5.  **Jalankan aplikasi:**
     ```bash
-    flutter run -d chrome  // Untuk Web
-    flutter run            // Untuk Android
+    flutter run -d chrome  # Untuk Web
+    flutter run            # Untuk Android
     ```
 
 ### Dependensi Utama
-Proyek ini menggunakan dependensi berikut (tercantum di `pubspec.yaml`):
-* **`firebase_core`**: Inti koneksi Firebase.
-* **`firebase_auth`**: Untuk sistem autentikasi.
-* **`cloud_firestore`**: Untuk koneksi ke database Firestore.
-* **`provider`**: Untuk state management (lapisan Controller).
-* **`intl`**: Untuk format angka (mata uang) dan tanggal.
+* **`firebase_core`**, **`firebase_auth`**, **`cloud_firestore`**, **`provider`**, **`intl`**.
+
+---
+
+## Alur Kerja Git & Kontribusi Kode
+
+Semua pekerjaan harus dilakukan di *branch* terpisah untuk menjaga *branch* `main` tetap stabil.
+
+1.  **Update `main`:** `git checkout main` lalu `git pull origin main`.
+2.  **Buat Branch Baru:** `git checkout -b feature/nama-fitur-baru`.
+3.  **Kerjakan Kode & Commit:** `git add .` lalu `git commit -m "pesan commit"`.
+4.  **Push Branch:** `git push -u origin feature/nama-fitur-baru`.
+5.  **Buat Pull Request** di GitHub untuk di-review.
 
 ---
 
 ## Struktur Database (Firestore)
 
-Ini adalah "kontrak" data antara Backend dan Frontend.
+Ini adalah "kontrak" data final antara Backend dan Frontend.
 
 ### Koleksi: `users`
-* Menyimpan data profil pengguna. ID Dokumen adalah `UID` dari Firebase Authentication.
+* **Tujuan:** Menyimpan data profil pengguna.
+* **ID Dokumen:** `UID` dari Firebase Authentication.
 * **Fields:** `username` (String), `email` (String), `gender` (String), `createdAt` (Timestamp), `isAdmin` (Boolean, opsional).
 
+### Koleksi: `menu`
+* **Tujuan:** Menyimpan **semua** item menu yang bisa dipesan dan dikelola oleh admin.
+* **ID Dokumen:** Auto-ID oleh Firestore.
+* **Fields:** `namaMenu` (String), `harga` (Number), `kategori` (String), `isTersedia` (Boolean).
+
 ### Koleksi: `pesanan`
-* Menyimpan data setiap pesanan yang dibuat oleh pengguna.
+* **Tujuan:** Menyimpan data setiap pesanan yang sudah final.
+* **ID Dokumen:** Auto-ID oleh Firestore.
 * **Fields:** `userId` (String), `namaPemesan` (String), `noMeja` (String), `items` (Array of Maps), `totalHarga` (Number), `statusPesanan` (String: 'baru', 'selesai'), `waktuPesan` (Timestamp).
-
-### Koleksi: `menu_tambahan`
-* Menyimpan data dinamis yang dikelola oleh admin.
-* **Fields:** `judul` (String), `detail` (String), `waktuPosting` (Timestamp).
-
----
-
-## Struktur Aset Aplikasi
-
-Gambar untuk **Menu Utama** disimpan secara lokal di dalam aplikasi.
-
-* **Lokasi Folder:** `assets/images/menu/`
-* **Deklarasi `pubspec.yaml`:**
-    ```yaml
-    flutter:
-      assets:
-        - assets/images/menu/
-    ```
 
 ---
 
 ## Arsitektur & State Management
 
-Proyek ini menggunakan arsitektur **MVC (Model-View-Controller)** untuk memisahkan tanggung jawab kode.
+Proyek ini menggunakan arsitektur **MVC (Model-View-Controller)**.
 
-* **Model:** Struktur data yang didefinisikan di dalam folder `lib/models/`.
-* **View:** Semua kode UI yang ada di dalam folder `lib/views/` (termasuk `screens` dan `widgets`).
-* **Controller:** Lapisan logika bisnis dan manajemen data. Untuk ini, kami menggunakan paket **`provider`** sebagai solusi *state management*. Setiap *controller* (misalnya `AuthController`, `CartController`) akan dibuat menggunakan `ChangeNotifier` untuk mengelola logika dan memberi tahu UI ketika ada perubahan data.
-
-```
-lib/
-├── models/
-├── views/
-│   ├── screens/
-│   └── widgets/
-└── controllers/
-```
+* **Model:** Struktur data di dalam `lib/models/`.
+* **View:** Semua kode UI di dalam `lib/views/`.
+* **Controller:** Lapisan logika bisnis menggunakan paket **`provider`** sebagai solusi *state management*. Setiap *controller* akan dibuat menggunakan `ChangeNotifier`.
