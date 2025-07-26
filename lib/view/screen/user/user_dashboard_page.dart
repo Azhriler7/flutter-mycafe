@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:mycafe/view/screen/auth/auth_wrapper.dart';
+import 'package:mycafe/view/screen/user/user_profile_page.dart';
 
 class UserDashboardPage extends StatefulWidget {
   const UserDashboardPage({super.key});
@@ -121,20 +122,60 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
       appBar: AppBar(
         title: const Text('My Cafe', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF1A1A1A),
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             onPressed: () async {
               final authController = Provider.of<AuthController>(context, listen: false);
               await authController.signOut();
               
-              // Perintah ini melakukan hal yang sama: membuka halaman baru
-              // dan menghapus semua halaman sebelumnya.
               Get.offAll(() => const AuthWrapper());
             },
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
           ),
         ],
+      ),
+      drawer: Drawer(
+        backgroundColor: const Color(0xFF2C2C2C),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Color(0xFF4CAF50)),
+              child: Text(
+                'Menu User', 
+                style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home_filled, color: Colors.white70),
+              title: const Text('Dashboard', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Get.back();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person, color: Colors.white70),
+              title: const Text('Profil', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Get.back();
+                Get.to(() => const UserProfilePage());
+              },
+            ),
+            const Divider(color: Colors.white24),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.white70),
+              title: const Text('Logout', style: TextStyle(color: Colors.white)),
+              onTap: () async {
+                final authController = Provider.of<AuthController>(context, listen: false);
+                await authController.signOut();
+                
+                Get.offAll(() => const AuthWrapper());
+              },
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [

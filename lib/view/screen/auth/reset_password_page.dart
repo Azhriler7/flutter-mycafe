@@ -32,13 +32,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     
     if (mounted) {
       if (success) {
+        // Kembali ke halaman sebelumnya tanpa delay
+        Get.back();
+        
         Get.snackbar(
           'Berhasil',
           'Email reset password telah dikirim!',
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          duration: const Duration(seconds: 1),
         );
-        Get.back();
       } else {
         Get.snackbar(
           'Error',
@@ -108,7 +111,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Note: Email mungkin saja masuk ke spam',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.orange,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
 
                   Container(
                     decoration: BoxDecoration(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mycafe/controller/auth_controller.dart';
+import 'package:mycafe/view/screen/auth/login_page.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -63,7 +64,18 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
     );
     
     if (mounted) {
-      if (!success) {
+      if (success) {
+        // Langsung redirect ke login page tanpa delay
+        Get.offAll(() => const LoginPage());
+        
+        Get.snackbar(
+          'Berhasil',
+          'Akun berhasil dihapus!',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 1),
+        );
+      } else {
         Get.snackbar(
           'Error',
           authController.errorMessage ?? 'Terjadi kesalahan',

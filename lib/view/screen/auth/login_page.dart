@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mycafe/controller/auth_controller.dart';
 import 'package:mycafe/view/screen/auth/register_page.dart';
 import 'package:mycafe/view/screen/auth/reset_password_page.dart';
+import 'package:mycafe/view/screen/auth/auth_wrapper.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
@@ -38,11 +39,15 @@ class _LoginPageState extends State<LoginPage> {
     
     if (mounted) {
       if (success) {
+        // Langsung redirect ke dashboard tanpa delay
+        Get.offAll(() => const AuthWrapper());
+        
         Get.snackbar(
           'Berhasil',
           'Login berhasil!',
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          duration: const Duration(seconds: 1),
         );
       } else {
         Get.snackbar(
@@ -192,12 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 50,
                     child: OutlinedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterPage(),
-                          ),
-                        );
+                        Get.to(() => const RegisterPage());
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -215,10 +215,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ResetPasswordPage()),
-                      );
+                      Get.to(() => const ResetPasswordPage());
                     },
                     child: const Text(
                       'Lupa Password?',

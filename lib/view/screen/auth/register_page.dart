@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mycafe/controller/auth_controller.dart';
+import 'package:mycafe/view/screen/auth/auth_wrapper.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
@@ -39,13 +40,16 @@ class _RegisterPageState extends State<RegisterPage> {
     
     if (mounted) {
       if (success) {
+        // Langsung masuk ke dashboard tanpa delay
+        Get.offAll(() => const AuthWrapper());
+        
         Get.snackbar(
           'Berhasil',
           'Akun berhasil dibuat!',
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          duration: const Duration(seconds: 1),
         );
-        Get.back();
       } else {
         Get.snackbar(
           'Error',
