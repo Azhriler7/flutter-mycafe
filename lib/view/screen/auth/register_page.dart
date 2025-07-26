@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mycafe/service/auth_service.dart';
+import 'package:mycafe/controller/auth_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -15,7 +17,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,58 +26,41 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-// --- _register ---
-Future<void> _register() async {
-  if (!_formKey.currentState!.validate()) return;
+  // Proses registrasi user baru
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  setState(() {
-    _isLoading = true;
-  });
+    final authController = Provider.of<AuthController>(context, listen: false);
 
-  try {
-    await authService.value.createAccount(
+    final success = await authController.signUp(
       email: _emailController.text.trim(),
       password: _passwordController.text,
     );
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Akun berhasil dibuat!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      // Hapus navigasi manual dari sini
-      // Navigator.of(context).pushReplacement(...);
-    }
-  } on FirebaseAuthException catch (e) {
-    String errorMessage = 'Terjadi kesalahan';
-    if (e.code == 'weak-password') {
-      errorMessage = 'Password terlalu lemah';
-    } else if (e.code == 'email-already-in-use') {
-      errorMessage = 'Email sudah digunakan';
-    } else if (e.code == 'invalid-email') {
-      errorMessage = 'Format email tidak valid';
-    }
     
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
+      if (success) {
+        Get.snackbar(
+          'Berhasil',
+          'Akun berhasil dibuat!',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.back();
+      } else {
+        Get.snackbar(
+          'Error',
+          authController.errorMessage ?? 'Terjadi kesalahan',
           backgroundColor: Colors.red,
-        ),
-      );
-    }
-  } finally {
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
+          colorText: Colors.white,
+        );
+      }
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
+    final authController = context.watch<AuthController>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A1A),
       appBar: AppBar(
@@ -84,7 +68,7 @@ Future<void> _register() async {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Get.back(),
         ),
       ),
       body: SafeArea(
@@ -96,7 +80,6 @@ Future<void> _register() async {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo/Title
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -111,7 +94,6 @@ Future<void> _register() async {
                   ),
                   const SizedBox(height: 32),
                   
-                  // Title
                   const Text(
                     'Daftar',
                     style: TextStyle(
@@ -130,7 +112,6 @@ Future<void> _register() async {
                   ),
                   const SizedBox(height: 40),
 
-                  // Email Field
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -139,29 +120,16 @@ Future<void> _register() async {
                     child: TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(
-                        color: Color(0xFF1A1A1A),
-                        fontSize: 16,
-                      ),
+                      style: const TextStyle(color: Color(0xFF1A1A1A)),
                       decoration: const InputDecoration(
                         labelText: 'Email',
                         labelStyle: TextStyle(color: Colors.grey),
                         prefixIcon: Icon(Icons.email, color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
+                        border: OutlineInputBorder(borderSide: BorderSide.none),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Email harus diisi';
-                        }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                          return 'Format email tidak valid';
                         }
                         return null;
                       },
@@ -169,7 +137,6 @@ Future<void> _register() async {
                   ),
                   const SizedBox(height: 16),
 
-                  // Password Field
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -178,10 +145,7 @@ Future<void> _register() async {
                     child: TextFormField(
                       controller: _passwordController,
                       obscureText: !_isPasswordVisible,
-                      style: const TextStyle(
-                        color: Color(0xFF1A1A1A),
-                        fontSize: 16,
-                      ),
+                      style: const TextStyle(color: Color(0xFF1A1A1A)),
                       decoration: InputDecoration(
                         labelText: 'Password',
                         labelStyle: const TextStyle(color: Colors.grey),
@@ -197,14 +161,7 @@ Future<void> _register() async {
                             });
                           },
                         ),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
+                        border: const OutlineInputBorder(borderSide: BorderSide.none),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -219,7 +176,6 @@ Future<void> _register() async {
                   ),
                   const SizedBox(height: 16),
 
-                  // Confirm Password Field
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -228,10 +184,7 @@ Future<void> _register() async {
                     child: TextFormField(
                       controller: _confirmPasswordController,
                       obscureText: !_isConfirmPasswordVisible,
-                      style: const TextStyle(
-                        color: Color(0xFF1A1A1A),
-                        fontSize: 16,
-                      ),
+                      style: const TextStyle(color: Color(0xFF1A1A1A)),
                       decoration: InputDecoration(
                         labelText: 'Konfirmasi Password',
                         labelStyle: const TextStyle(color: Colors.grey),
@@ -247,14 +200,7 @@ Future<void> _register() async {
                             });
                           },
                         ),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
+                        border: const OutlineInputBorder(borderSide: BorderSide.none),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -269,21 +215,19 @@ Future<void> _register() async {
                   ),
                   const SizedBox(height: 32),
 
-                  // Register Button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: _isLoading ? null : _register,
+                      onPressed: authController.isLoading ? null : _register,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF4CAF50),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        elevation: 2,
                       ),
-                      child: _isLoading
+                      child: authController.isLoading
                           ? const SizedBox(
                               width: 20,
                               height: 20,
@@ -303,7 +247,6 @@ Future<void> _register() async {
                   ),
                   const SizedBox(height: 24),
 
-                  // Login Button
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: const Text(
