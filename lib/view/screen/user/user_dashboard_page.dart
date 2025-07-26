@@ -10,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:mycafe/view/screen/auth/auth_wrapper.dart';
 import 'package:mycafe/view/screen/user/user_profile_page.dart';
+import 'package:mycafe/view/screen/user/user_cart_page.dart';
+import 'package:mycafe/view/screen/user/user_payment_page.dart';
 
 class UserDashboardPage extends StatefulWidget {
   const UserDashboardPage({super.key});
@@ -21,6 +23,24 @@ class UserDashboardPage extends StatefulWidget {
 class _UserDashboardPageState extends State<UserDashboardPage> {
   final _noMejaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  // Dummy menu items for testing
+  final List<MenuModel> _dummyMenus = [
+    MenuModel(
+      id: 'dummy_1',
+      namaMenu: 'Nasi Goreng Special',
+      harga: 25000,
+      kategori: 'makanan',
+      isTersedia: true,
+    ),
+    MenuModel(
+      id: 'dummy_2',
+      namaMenu: 'Es Teh Manis',
+      harga: 8000,
+      kategori: 'minuman',
+      isTersedia: true,
+    ),
+  ];
 
   @override
   void dispose() {
@@ -186,22 +206,82 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
+
+                // Use dummy data if no data from Firestore or if data is empty
+                List<MenuModel> menuItems;
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('Tidak ada menu tersedia.', style: TextStyle(color: Colors.white70)));
+                  menuItems = _dummyMenus;
+                } else {
+                  // Combine Firestore data with dummy data
+                  menuItems = [...snapshot.data!, ..._dummyMenus];
                 }
 
-                final menuItems = snapshot.data!;
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),
                   itemCount: menuItems.length,
                   itemBuilder: (context, index) {
                     final menu = menuItems[index];
+                    final isDummy = menu.id.startsWith('dummy_');
+                    
                     return Card(
                       color: const Color(0xFF2C2C2C),
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
-                        title: Text(menu.namaMenu, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                        subtitle: Text(currencyFormatter.format(menu.harga), style: const TextStyle(color: Colors.white70)),
+                        leading: isDummy 
+                          ? Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4CAF50).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(
+                                Icons.fastfood,
+                                color: Color(0xFF4CAF50),
+                                size: 20,
+                              ),
+                            )
+                          : null,
+                        title: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                menu.namaMenu, 
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+                              ),
+                            ),
+                            if (isDummy)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.orange, width: 1),
+                                ),
+                                child: const Text(
+                                  'DEMO',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              currencyFormatter.format(menu.harga), 
+                              style: const TextStyle(color: Colors.white70)
+                            ),
+                            Text(
+                              'Kategori: ${menu.kategori}',
+                              style: const TextStyle(color: Colors.white54, fontSize: 12),
+                            ),
+                          ],
+                        ),
                         trailing: IconButton(
                           icon: const Icon(Icons.add_shopping_cart, color: Colors.green),
                           onPressed: () => cartController.addToCart(menu),
@@ -263,6 +343,73 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
             ),
         ],
       ),
+      floatingActionButton: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF66BB6A),
+              Color(0xFF4CAF50),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF4CAF50).withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(30),
+                onTap: () => Get.to(() => const CartPage()),
+                child: const Center(
+                  child: Icon(
+                    Icons.shopping_cart_outlined,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+              ),
+            ),
+            if (cartController.totalItems > 0)
+              Positioned(
+                right: 4,
+                top: 4,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 20,
+                    minHeight: 20,
+                  ),
+                  child: Text(
+                    cartController.totalItems > 99 ? '99+' : cartController.totalItems.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
