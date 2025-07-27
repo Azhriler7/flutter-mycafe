@@ -14,7 +14,6 @@ class UserMenuLainnyaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final menuController = context.watch<CafeMenuController>();
-    final cartController = context.watch<CartController>();
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
@@ -32,7 +31,6 @@ class UserMenuLainnyaPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // AppBar Custom Floating
             Container(
               color: const Color(0xFFA65A3D),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -54,14 +52,14 @@ class UserMenuLainnyaPage extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 12),
             Expanded(
               child: StreamBuilder<List<MenuModel>>(
                 stream: menuController.getMenusStream(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting)
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
+                  }
 
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
@@ -73,86 +71,92 @@ class UserMenuLainnyaPage extends StatelessWidget {
                   }
 
                   final menus = snapshot.data!;
+
                   return ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: menus.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final menu = menus[index];
-                      final qty = cartController.getQuantity(menu);
+                      return Consumer<CartController>(
+                        builder: (context, cartController, child) {
+                          final qty = cartController.getQuantity(menu);
 
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE6D9D1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    menu.namaMenu,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    formatter.format(menu.harga),
-                                    style: const TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 12,
                             ),
-                            qty == 0
-                                ? IconButton(
-                                    onPressed: () =>
-                                        cartController.addToCart(menu),
-                                    icon: const Icon(
-                                      Icons.add_circle_outline,
-                                      color: Colors.green,
-                                    ),
-                                  )
-                                : Row(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE6D9D1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      IconButton(
-                                        onPressed: () => cartController
-                                            .decrementQuantityByMenu(menu),
-                                        icon: const Icon(
-                                          Icons.remove_circle_outline,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
                                       Text(
-                                        '$qty',
+                                        menu.namaMenu,
                                         style: const TextStyle(
-                                          color: Colors.black87,
+                                          color: Colors.black,
+                                          fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      IconButton(
-                                        onPressed: () => cartController
-                                            .incrementQuantityByMenu(menu),
-                                        icon: const Icon(
-                                          Icons.add_circle_outline,
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        formatter.format(menu.harga),
+                                        style: const TextStyle(
                                           color: Colors.black87,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ],
                                   ),
-                          ],
-                        ),
+                                ),
+                                qty == 0
+                                    ? IconButton(
+                                        onPressed: () =>
+                                            cartController.addToCart(menu),
+                                        icon: const Icon(
+                                          Icons.add_circle_outline,
+                                          color: Colors.green,
+                                        ),
+                                      )
+                                    : Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () => cartController
+                                                .decrementQuantityByMenu(menu),
+                                            icon: const Icon(
+                                              Icons.remove_circle_outline,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          Text(
+                                            '$qty',
+                                            style: const TextStyle(
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () => cartController
+                                                .incrementQuantityByMenu(menu),
+                                            icon: const Icon(
+                                              Icons.add_circle_outline,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ],
+                            ),
+                          );
+                        },
                       );
                     },
                   );
