@@ -9,7 +9,8 @@ class CartController with ChangeNotifier {
 
   int get totalItems => _items.fold(0, (sum, item) => sum + item.quantity);
 
-  double get totalPrice => _items.fold(0, (sum, item) => sum + (item.menu.harga * item.quantity));
+  double get totalPrice =>
+      _items.fold(0, (sum, item) => sum + (item.menu.harga * item.quantity));
 
   // Tambah item ke keranjang
   void addToCart(MenuModel menu) {
@@ -50,5 +51,36 @@ class CartController with ChangeNotifier {
   void clearCart() {
     _items.clear();
     notifyListeners();
+  }
+
+  // Ambil jumlah berdasarkan menu
+  int getQuantity(MenuModel menu) {
+    final item = _items.firstWhere(
+      (element) => element.menu.id == menu.id,
+      orElse: () => CartItemModel(menu: menu, quantity: 0),
+    );
+    return item.quantity;
+  }
+
+  // Tambah jumlah berdasarkan menu
+  void incrementQuantityByMenu(MenuModel menu) {
+    final index = _items.indexWhere((element) => element.menu.id == menu.id);
+    if (index != -1) {
+      _items[index].quantity++;
+      notifyListeners();
+    }
+  }
+
+  // Kurangi jumlah berdasarkan menu
+  void decrementQuantityByMenu(MenuModel menu) {
+    final index = _items.indexWhere((element) => element.menu.id == menu.id);
+    if (index != -1) {
+      if (_items[index].quantity > 1) {
+        _items[index].quantity--;
+      } else {
+        _items.removeAt(index);
+      }
+      notifyListeners();
+    }
   }
 }
