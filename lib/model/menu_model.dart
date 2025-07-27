@@ -1,3 +1,5 @@
+// File: lib/model/menu_model.dart
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MenuModel {
@@ -6,6 +8,7 @@ class MenuModel {
   final int harga;
   final String kategori;
   final bool isTersedia;
+  final String gambar;
 
   MenuModel({
     required this.id,
@@ -13,16 +16,31 @@ class MenuModel {
     required this.harga,
     required this.kategori,
     required this.isTersedia,
+    required this.gambar,
   });
 
   factory MenuModel.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>;
+
     return MenuModel(
       id: doc.id,
-      namaMenu: data['namaMenu'] ?? 'Tanpa Nama',
-      harga: data['harga'] ?? 0,
-      kategori: data['kategori'] ?? 'lainnya',
+      namaMenu: data['namaMenu'] ?? 'Nama Menu',
+      harga: data['harga'] ?? 18000, // harga default
+      kategori: data['kategori'] ?? 'Minuman',
       isTersedia: data['isTersedia'] ?? true,
+      gambar:
+          data['gambar'] ??
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP7PzXpj11ISpb2pI5WjxOaFayqiv2w4qZxA&s', // default gambar
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'namaMenu': namaMenu,
+      'harga': harga,
+      'kategori': kategori,
+      'isTersedia': isTersedia,
+      'gambar': gambar,
+    };
   }
 }
