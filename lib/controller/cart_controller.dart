@@ -53,7 +53,7 @@ class CartController with ChangeNotifier {
     notifyListeners();
   }
 
-  // ✅ Ambil jumlah berdasarkan menu
+  // Ambil jumlah berdasarkan menu
   int getQuantity(MenuModel menu) {
     final item = _items.firstWhere(
       (element) => element.menu.id == menu.id,
@@ -62,7 +62,7 @@ class CartController with ChangeNotifier {
     return item.quantity;
   }
 
-  // ✅ Tambah jumlah berdasarkan menu
+  // Tambah jumlah berdasarkan menu
   void incrementQuantityByMenu(MenuModel menu) {
     final index = _items.indexWhere((element) => element.menu.id == menu.id);
     if (index != -1) {
@@ -71,7 +71,7 @@ class CartController with ChangeNotifier {
     }
   }
 
-  // ✅ Kurangi jumlah berdasarkan menu
+  // Kurangi jumlah berdasarkan menu
   void decrementQuantityByMenu(MenuModel menu) {
     final index = _items.indexWhere((element) => element.menu.id == menu.id);
     if (index != -1) {

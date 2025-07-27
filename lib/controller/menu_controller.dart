@@ -6,7 +6,6 @@ class CafeMenuController with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionPath = 'menus';
 
-  // Ambil stream daftar menu
   Stream<List<MenuModel>> getMenusStream() {
     return _firestore
         .collection(_collectionPath)
@@ -29,7 +28,7 @@ class CafeMenuController with ChangeNotifier {
                   return null;
                 }
               })
-              .whereType<MenuModel>() // Hanya ambil yang tidak null
+              .whereType<MenuModel>()
               .toList();
         });
   }
@@ -39,7 +38,7 @@ class CafeMenuController with ChangeNotifier {
     required String namaMenu,
     required int harga,
     required String kategori,
-    String? gambar, // Opsional
+    String? gambar,
   }) async {
     try {
       await _firestore.collection(_collectionPath).add({
@@ -47,7 +46,7 @@ class CafeMenuController with ChangeNotifier {
         'harga': harga,
         'kategori': kategori.isNotEmpty ? kategori.toLowerCase() : 'lainnya',
         'isTersedia': true,
-        'gambar': gambar ?? '', // default empty string jika null
+        'gambar': gambar ?? '',
       });
       debugPrint("✅ Menu '$namaMenu' berhasil ditambahkan ke Firestore");
     } catch (e) {

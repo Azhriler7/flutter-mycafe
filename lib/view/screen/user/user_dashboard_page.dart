@@ -12,7 +12,7 @@ import 'package:mycafe/model/menu_model.dart';
 import 'package:mycafe/view/screen/auth/auth_wrapper.dart';
 import 'package:mycafe/view/screen/user/user_menu_lainnya_page.dart';
 import 'package:mycafe/view/screen/user/user_profile_page.dart';
-import 'package:mycafe/view/screen/user/user_cart_page.dart'; // ✅ Tambahkan ini
+import 'package:mycafe/view/screen/user/user_cart_page.dart';
 
 class UserDashboardPage extends StatefulWidget {
   const UserDashboardPage({super.key});
@@ -37,9 +37,9 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
     final cartController = context.watch<CartController>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF7F1), // Warna latar belakang
+      backgroundColor: const Color(0xFFFFF7F1),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFA65A3D), // Warna appbar
+        backgroundColor: const Color(0xFFA65A3D),
         title: const Text('My Cafe', style: TextStyle(color: Colors.white)),
         leading: Builder(
           builder: (context) => IconButton(
@@ -85,17 +85,25 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Text(
-              'Best Seller!!!',
-              style: TextStyle(color: Colors.black, fontSize: 20),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: Text(
+                  'Best Seller!!!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-          ),
-          Expanded(
-            child: StreamBuilder<List<MenuModel>>(
+            StreamBuilder<List<MenuModel>>(
               stream: menuController.getMenusStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -111,119 +119,116 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                 }
 
                 final menus = snapshot.data!.take(4).toList();
-                return Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: GridView.builder(
-                    itemCount: menus.length + 1,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                        ),
-                    itemBuilder: (context, index) {
-                      if (index == menus.length) {
-                        return GestureDetector(
-                          onTap: () =>
-                              Get.to(() => const UserMenuLainnyaPage()),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE6D9D1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Menu Lainnya',
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
 
-                      final menu = menus[index];
-                      final qty = cartController.getQuantity(menu);
-                      final hasQty = qty > 0;
-
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: menus.length + 1,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                  ),
+                  itemBuilder: (context, index) {
+                    if (index == menus.length) {
                       return GestureDetector(
-                        onTap: () => cartController.addToCart(menu),
+                        onTap: () => Get.to(() => const UserMenuLainnyaPage()),
                         child: Container(
                           decoration: BoxDecoration(
                             color: const Color(0xFFE6D9D1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                flex: 8,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: const Icon(
-                                    Icons.fastfood,
-                                    color: Colors.brown,
-                                    size: 48,
-                                  ),
+                          child: const Center(
+                            child: Text(
+                              'Menu Lainnya',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    final menu = menus[index];
+                    final qty = cartController.getQuantity(menu);
+                    final hasQty = qty > 0;
+
+                    return GestureDetector(
+                      onTap: () => cartController.addToCart(menu),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE6D9D1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Expanded(
+                              flex: 8,
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: const Icon(
+                                  Icons.fastfood,
+                                  color: Colors.brown,
+                                  size: 48,
                                 ),
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: hasQty
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(
-                                              Icons.remove,
-                                              color: Colors.black,
-                                            ),
-                                            onPressed: () => cartController
-                                                .decrementQuantityByMenu(menu),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: hasQty
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.remove,
+                                            color: Colors.black,
                                           ),
-                                          Text(
-                                            '$qty',
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(
-                                              Icons.add,
-                                              color: Colors.black,
-                                            ),
-                                            onPressed: () => cartController
-                                                .incrementQuantityByMenu(menu),
-                                          ),
-                                        ],
-                                      )
-                                    : Center(
-                                        child: Text(
-                                          menu.namaMenu,
+                                          onPressed: () => cartController
+                                              .decrementQuantityByMenu(menu),
+                                        ),
+                                        Text(
+                                          '$qty',
                                           style: const TextStyle(
                                             color: Colors.black,
                                           ),
                                         ),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.add,
+                                            color: Colors.black,
+                                          ),
+                                          onPressed: () => cartController
+                                              .incrementQuantityByMenu(menu),
+                                        ),
+                                      ],
+                                    )
+                                  : Center(
+                                      child: Text(
+                                        menu.namaMenu,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
                                       ),
-                              ),
-                            ],
-                          ),
+                                    ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
         onPressed: () {
-          // ✅ Navigasi ke halaman cart
           Get.to(() => const CartPage());
         },
         shape: const CircleBorder(),
