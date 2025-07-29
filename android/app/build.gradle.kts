@@ -26,15 +26,14 @@ if (keyPropertiesFile.exists()) {
 android {
     namespace = "com.example.mycafe"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 
     signingConfigs {
@@ -50,7 +49,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.mycafe"
-        minSdk = 23  
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInt()
         versionName = flutterVersionName
