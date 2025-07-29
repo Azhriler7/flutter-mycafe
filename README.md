@@ -118,9 +118,22 @@ Ini adalah "kontrak" data final antara Backend dan Frontend.
 * **Fields:** `userId` (String), `namaPemesan` (String), `noMeja` (String), `items` (Array of Maps), `totalHarga` (Number), `statusPesanan` (String: 'baru', 'selesai'), `waktuPesan` (Timestamp).
 ---
 
-## Cara Mengisi Data ke Firestore
+## Pengisian Data ke Firestore
+Sebelum mengisi data, pastikan terlebih dahulu [Firestore Rules](https://console.firebase.google.com/u/0/project/_/firestore/rules) Anda telah disesuaikan untuk mengizinkan akses bagi pengguna yang telah login:
+```bash
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Izinkan semua pengguna yang terautentikasi untuk membaca dan menulis
+    // di semua koleksi untuk sementara waktu.
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
 
-Data Firestore dapat diisi dengan dua cara berikut:
+Setelah itu, data Firestore dapat diisi dengan dua cara berikut:
 
 ### 1. Melalui Firebase Console (Manual)
 1. Buka [Firebase Console](https://console.firebase.google.com/)
@@ -143,7 +156,9 @@ Data Firestore dapat diisi dengan dua cara berikut:
 4. Data akun akan masuk ke koleksi `users` saat registrasi berhasil
 
 >  Pastikan koleksi `users`, `menu`, dan `pesanan` sudah dibuat, serta **Firestore rules** mengizinkan akses sesuai peran (admin/user).
+
 ---
+
 ## Contoh Isi Dokumen Firestore
 
 Berikut adalah contoh isi dari masing-masing dokumen dalam Firestore Database yang digunakan pada aplikasi ini, sesuai dengan struktur "kontrak data" yang telah didefinisikan.
