@@ -123,7 +123,7 @@ Ini adalah struktur data final antara Backend dan Frontend.
 ### Koleksi: `menu`
 * **Tujuan:** Menyimpan semua item menu yang bisa dipesan dan dikelola oleh admin.
 * **ID Dokumen:** Auto-ID oleh Firestore.
-* **Fields:** `namaMenu` (String), `harga` (Number), `kategori` (String), `isTersedia` (Boolean).
+* **Fields:** `namaMenu` (String), `harga` (Number), `isTersedia` (Boolean).
 
 ### Koleksi: `pesanan`
 * **Tujuan:** Menyimpan data setiap pesanan yang sudah final dan di-submit.

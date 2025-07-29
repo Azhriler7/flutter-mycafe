@@ -92,9 +92,7 @@ class CartController extends GetxController {
           id: menuName, 
           namaMenu: menuName, 
           harga: 0, 
-          kategori: 'static',
           isTersedia: true,
-          gambar: ''
         ), 
         quantity: 0
       ),
@@ -116,9 +114,7 @@ class CartController extends GetxController {
         id: menuName,
         namaMenu: menuName,
         harga: price,
-        kategori: 'static',
         isTersedia: true,
-        gambar: ''
       )
     ));
   }

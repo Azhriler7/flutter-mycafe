@@ -101,9 +101,21 @@ class PesananController extends GetxController {
     required double totalHarga,
   }) async {
     try {
+      // Ambil username dari collection users
+      String username = namaPemesan; 
+      try {
+        final userDoc = await _firestore.collection('users').doc(userId).get();
+        if (userDoc.exists) {
+          final userData = userDoc.data() as Map<String, dynamic>;
+          username = userData['username'] ?? namaPemesan;
+        }
+      } catch (e) {
+        // Jika gagal ambil username, pakai namaPemesan sebagai fallback
+      }
+
       await _firestore.collection(_collectionPath).add({
         'userId': userId.toString(),
-        'namaPemesan': namaPemesan.toString(),
+        'namaPemesan': username, 
         'noMeja': noMeja.toString(),
         'items': items,
         'totalHarga': totalHarga.toInt(),
