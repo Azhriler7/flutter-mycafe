@@ -6,7 +6,7 @@ Aplikasi ini memiliki sistem menu dinamis yang dikelola oleh admin dan alur pemb
 
 ---
 
-##Akun Uji Coba
+## Akun Uji Coba
 Untuk keperluan pengujian, gunakan akun berikut:
 
 Akun Admin
