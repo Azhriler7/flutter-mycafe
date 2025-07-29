@@ -42,14 +42,14 @@ Akun User
 ## Apa yang bisa dilakukan?
 
 ### 👥 **Untuk Pelanggan**
-- **Melihat Menu**: Ada menu populer di halaman utama + menu lengkap dari database
+- **Melihat Menu**: Melihat menu populer di halaman utama + menu lengkap dari database
 - **Pesan**: Pilih menu, masukkan ke keranjang, atur jumlah
-- **Bayar**: Input nomor meja, upload bukti transfer, selesai!
+- **Bayar**: Input nomor meja, input bukti transfer, selesai
 - **Profil**: Edit nama, gender, ganti password, atau hapus akun
 
 ### 🛠️ **Untuk Admin** 
 - **Kelola Menu**: Tambah, edit, atau hapus menu
-- **Terima Pesanan**: Lihat pesanan baru dan tandai selesai
+- **Terima Pesanan**: Lihat pesanan baru dan tandai selesai, bisa melihat history pesanan juga
 - **Dashboard**: Monitor pesanan masuk secara real-time
 
 ### 🔐 **Sistem Login**
@@ -61,7 +61,7 @@ Akun User
 
 **Yang perlu disiapkan:**
 - Flutter SDK (versi 3.x.x ke atas)
-- Android Studio atau VS Code
+- Android Studio dan VS Code
 
 ### Langkah-langkah:
 
@@ -188,6 +188,6 @@ lib/
 
 **Yang perlu tahu:**
 - **Model**: Bentuk data (user, menu, pesanan)
-- **View**: Yang keliatan di layar
-- **Controller**: Yang ngatur data dan logika
-- **GetX**: Buat state management yang reactive (otomatis update UI kalau data berubah)
+- **View**: Tampilan UI aplikasi
+- **Controller**: Mengatur data dan logika
+- **GetX**: Untuk state management yang reactive (otomatis update UI kalau data berubah)
