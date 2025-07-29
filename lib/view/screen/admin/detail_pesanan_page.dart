@@ -75,114 +75,123 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'No Meja: ${widget.order.noMeja}',
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 78, 52, 46), 
-                    fontSize: 22, 
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Pemesan: ${widget.order.namaPemesan}',
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 78, 52, 46), 
-                    fontSize: 16
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: widget.order.statusPesanan == 'selesai' 
-                        ? Colors.green 
-                        : Colors.orange,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    'Status: ${widget.order.statusPesanan}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 78, 52, 46),
-                      width: 1,
-                    ),
-                  ),
+          Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                       const Text(
-                        'Pesanan:',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 78, 52, 46), 
-                          fontSize: 22, 
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _buildItemsList(),
-                    ],
-                  ),
-                ),
-                
-                const Spacer(),
-
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 78, 52, 46),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Total', 
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 78, 52, 46), 
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        )
-                      ),
                       Text(
-                        formattedTotal,
+                        'No Meja: ${widget.order.noMeja}',
                         style: const TextStyle(
                           color: Color.fromARGB(255, 78, 52, 46), 
                           fontSize: 22, 
                           fontWeight: FontWeight.bold
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Pemesan: ${widget.order.namaPemesan}',
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 78, 52, 46), 
+                          fontSize: 16
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: widget.order.statusPesanan == 'selesai' 
+                              ? Colors.green 
+                              : Colors.orange,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          'Status: ${widget.order.statusPesanan}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 78, 52, 46),
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                             const Text(
+                              'Pesanan:',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 78, 52, 46), 
+                                fontSize: 22, 
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildItemsList(),
+                          ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
+
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 78, 52, 46),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Total', 
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 78, 52, 46), 
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              )
+                            ),
+                            Text(
+                              formattedTotal,
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 78, 52, 46), 
+                                fontSize: 22, 
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                
-                // Tampilkan tombol hanya jika pesanan belum selesai
-                if (widget.order.statusPesanan != 'selesai')
-                  PrimaryButton(
+              ),
+              
+              // Tombol tetap di bawah
+              if (widget.order.statusPesanan != 'selesai')
+                Container(
+                  padding: const EdgeInsets.all(24.0),
+                  child: PrimaryButton(
                     text: 'Pesanan Selesai',
                     onPressed: () {
                       setState(() {
@@ -190,8 +199,8 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
                       });
                     },
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
           if (_showConfirmation)
             Positioned.fill(

@@ -17,6 +17,31 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   final _noMejaController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _preloadImages();
+  }
+
+  void _preloadImages() {
+    final imagePaths = [
+      'assets/images/cappucino.jpg',
+      'assets/images/iced_latte.jpg',
+      'assets/images/iced-americano.jpg',
+      'assets/images/cheese_cake.jpg',
+      'assets/images/fries.jpg',
+      'assets/images/onion_rings.jpg',
+    ];
+    
+    for (int i = 0; i < imagePaths.length; i++) {
+      Future.delayed(Duration(milliseconds: i * 50), () {
+        if (mounted) {
+          precacheImage(AssetImage(imagePaths[i]), context);
+        }
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _noMejaController.dispose();
     super.dispose();
@@ -135,6 +160,10 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                 mainAxisSpacing: 12,
                 childAspectRatio: 0.8, 
               ),
+              // Tambah caching untuk performa
+              addAutomaticKeepAlives: true,
+              addRepaintBoundaries: true,
+              addSemanticIndexes: true,
               itemBuilder: (context, index) {
                 if (index == bestSellerMenus.length) {
                   return MenuLainnyaCard(
