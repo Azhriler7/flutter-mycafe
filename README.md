@@ -6,6 +6,14 @@ Aplikasi ini memiliki sistem menu dinamis yang dikelola oleh admin dan alur pemb
 
 ---
 
+## 👥 Kelompok 8
+**Nama Anggota:**
+1. Azhriler Lintang (3337230087)
+2. Cahaya Jiwa Anenda (3337230086)
+3. Muhammad Zidan Heiqmatyar (3337230084)
+
+---
+
 ## Akun Uji Coba
 Untuk keperluan pengujian, gunakan akun berikut:
 
