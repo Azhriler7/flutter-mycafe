@@ -116,7 +116,33 @@ Ini adalah "kontrak" data final antara Backend dan Frontend.
 * **Tujuan:** Menyimpan data setiap pesanan yang sudah final.
 * **ID Dokumen:** Auto-ID oleh Firestore.
 * **Fields:** `userId` (String), `namaPemesan` (String), `noMeja` (String), `items` (Array of Maps), `totalHarga` (Number), `statusPesanan` (String: 'baru', 'selesai'), `waktuPesan` (Timestamp).
+---
 
+## 🛠️ Cara Mengisi Data ke Firestore
+
+Data Firestore dapat diisi dengan dua cara berikut:
+
+### 1. Melalui Firebase Console (Manual)
+1. Buka [Firebase Console](https://console.firebase.google.com/)
+2. Pilih proyek Firebase yang terhubung ke aplikasi
+3. Masuk ke menu **Firestore Database**
+4. Klik **Start collection** → masukkan nama koleksi (contoh: `users`, `menu`, `pesanan`)
+5. Tambahkan dokumen baru dengan format sesuai contoh di atas:
+   - Klik **Add Document**
+   - Masukkan setiap field: nama, tipe data (String, Boolean, Number, Timestamp), dan nilainya
+   - Klik **Save**
+
+### 2. Melalui Aplikasi (Sebagai Admin)
+1. Login menggunakan akun admin:
+   - 📧 `admin@example.com`
+   - 🔒 `admin123`
+2. Buka halaman **Manajemen Menu**
+   - Tambah menu baru → otomatis akan disimpan ke koleksi `menu`
+3. Buat pesanan menggunakan akun user biasa
+   - Setelah checkout, data pesanan akan otomatis masuk ke koleksi `pesanan`
+4. Data akun akan masuk ke koleksi `users` saat registrasi berhasil
+
+> 🔒 Pastikan koleksi `users`, `menu`, dan `pesanan` sudah dibuat, serta **Firestore rules** mengizinkan akses sesuai peran (admin/user).
 ---
 ## 📄 Contoh Isi Dokumen Firestore
 
