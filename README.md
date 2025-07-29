@@ -105,7 +105,7 @@ jika ingin menambahkan fitur:
 
 1. **Update kode terbaru:** `git checkout main` lalu `git pull origin main`
 2. **Buat branch baru:** `git checkout -b feature/nama-fitur-baru`  
-3. **Koding & commit:** `git add .` lalu `git commit -m "pesan commit"`
+3. **Coding & commit:** `git add .` lalu `git commit -m "pesan commit"`
 4. **Upload:** `git push -u origin feature/nama-fitur-baru`
 5. **Buat Pull Request** di GitHub
 
@@ -128,7 +128,6 @@ Ini adalah struktur data final antara Backend dan Frontend.
 ### Koleksi: `pesanan`
 * **Tujuan:** Menyimpan data setiap pesanan yang sudah final dan di-submit.
 * **ID Dokumen:** Auto-ID oleh Firestore.
-* **Fields:** `userId` (String), `namaPemesan` (String), `noMeja` (String), `items` (Array of Maps), `totalHarga` (Number), `statusPesanan` (String: 'baru', 'selesai'), `waktuPesan` (Timestamp), `buktiPembayaran` (String).
 
 ---
 
