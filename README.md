@@ -119,7 +119,7 @@ Ini adalah "kontrak" data final antara Backend dan Frontend.
 ---
 
 ## Pengisian Data ke Firestore
-Sebelum mengisi data, pastikan terlebih dahulu [Firestore Rules](https://console.firebase.google.com/u/0/project/_/firestore/rules) Anda telah disesuaikan untuk mengizinkan akses bagi pengguna yang telah login:
+Sebelum mengisi data, pastikan terlebih dahulu [Firestore Rules](https://console.firebase.google.com/u/0/project/_/firestore/rules) pada projek Anda telah disesuaikan untuk mengizinkan akses bagi pengguna yang telah login:
 ```bash
 rules_version = '2';
 service cloud.firestore {
