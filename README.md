@@ -118,6 +118,46 @@ Ini adalah "kontrak" data final antara Backend dan Frontend.
 * **Fields:** `userId` (String), `namaPemesan` (String), `noMeja` (String), `items` (Array of Maps), `totalHarga` (Number), `statusPesanan` (String: 'baru', 'selesai'), `waktuPesan` (Timestamp).
 
 ---
+## 📄 Contoh Isi Dokumen Firestore
+
+Berikut adalah contoh isi dari masing-masing dokumen dalam Firestore Database yang digunakan pada aplikasi ini, sesuai dengan struktur "kontrak data" yang telah didefinisikan.
+
+### Koleksi: `users`
+```bash
+username: "user",
+email: "user@example.com",
+gender: "Wanita",
+isAdmin: false,
+createdAt: "2025-07-29T07:51:11Z"
+```
+
+### Koleksi: `menu`
+```bash
+namaMenu: "Roti Panggang"
+harga: 20000
+kategori: "dessert"
+isTersedia: true
+```
+
+### Koleksi: `pesanan`
+```bash
+items:
+  - namaMenu: "Kopi Susu", jumlah: 2, harga: 20000
+  - namaMenu: "Es Teh Manis", jumlah: 2, harga: 15000
+  - namaMenu: "Cheese Cake", jumlah: 1, harga: 35000
+  - namaMenu: "Iced Americano", jumlah: 1, harga: 22000
+  - namaMenu: "Iced Latte", jumlah: 1, harga: 28000
+  - namaMenu: "Cappuccino", jumlah: 1, harga: 25000
+namaPemesan: "user@example.com"
+noMeja: "56"
+statusPesanan: "selesai"
+totalHarga: 180000
+userId: "6sPsPZVw0abOrsdFziuvKTgUSxj1"
+waktuPesan: 2025-07-29T05:56:42Z
+waktuSelesai: 2025-07-29T07:47:34Z
+```
+
+---
 
 ## Arsitektur & State Management
 
