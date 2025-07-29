@@ -1,8 +1,10 @@
-# Aplikasi Kafe Sederhana (Android & Web) ☕
+# My Cafe - Aplikasi Pemesanan Kafe ☕
 
-Aplikasi pemesanan untuk kafe yang dibangun menggunakan Flutter dan Firebase. Proyek ini dirancang untuk platform **Android** dan **Web**.
+Aplikasi sederhana untuk memesan makanan dan minuman di kafe. Dibuat dengan Flutter dan Firebase, bisa dijalankan di Android dan Web.
 
-Aplikasi ini memiliki sistem menu dinamis yang dikelola oleh admin dan alur pembayaran yang disederhanakan dengan verifikasi manual oleh staf di meja pelanggan.
+Aplikasi ini memiliki 2 jenis pengguna:
+- **Pelanggan**: Bisa melihat menu, memesan, dan bayar
+- **Admin**: Bisa mengelola menu dan konfirmasi pesanan
 
 ---
 
@@ -11,6 +13,16 @@ Aplikasi ini memiliki sistem menu dinamis yang dikelola oleh admin dan alur pemb
 1. Azhriler Lintang (3337230087)
 2. Cahaya Jiwa Anenda (3337230086)
 3. Muhammad Zidan Heiqmatyar (3337230084)
+
+---
+
+## Daftar Isi
+1. [Apa yang bisa dilakukan?](#apa-yang-bisa-dilakukan)
+2. [Cara Install & Jalankan](#cara-install--jalankan)
+3. [Teknologi yang Dipakai](#teknologi-yang-dipakai)
+4. [Panduan Kontribusi](#panduan-kontribusi)
+5. [Database (Firestore)](#database-firestore)
+6. [Struktur Kode](#struktur-kode)
 
 ---
 
@@ -26,136 +38,96 @@ Akun User
 🔒 user123
 
 ---
-## Daftar Isi
-1.  [Daftar Halaman Aplikasi](#daftar-halaman-aplikasi)
-2.  [Persiapan & Instalasi](#persiapan--instalasi)
-3.  [Alur Kerja Git & Kontribusi Kode](#alur-kerja-git--kontribusi-kode)
-4.  [Struktur Database (Firestore)](#struktur-database-firestore)
-5.  [Arsitektur & State Management](#arsitektur--state-management)
 
----
+## Apa yang bisa dilakukan?
 
-## Daftar Halaman Aplikasi
+### 👥 **Untuk Pelanggan**
+- **Melihat Menu**: Ada menu populer di halaman utama + menu lengkap dari database
+- **Pesan**: Pilih menu, masukkan ke keranjang, atur jumlah
+- **Bayar**: Input nomor meja, upload bukti transfer, selesai!
+- **Profil**: Edit nama, gender, ganti password, atau hapus akun
 
-Berikut adalah rincian halaman yang akan dibuat untuk masing-masing peran.
+### 🛠️ **Untuk Admin** 
+- **Kelola Menu**: Tambah, edit, atau hapus menu
+- **Terima Pesanan**: Lihat pesanan baru dan tandai selesai
+- **Dashboard**: Monitor pesanan masuk secara real-time
 
-### Halaman Sisi Pelanggan (User)
-1.  **Layar Autentikasi:** Mencakup halaman Login, Register, dan Lupa Password.
-2.  **Dashboard Pengguna:** Halaman utama terpadu yang menampilkan daftar menu dari Firestore dan ringkasan keranjang belanja di bagian bawah.
-3.  **Profil Pengguna:** Halaman untuk mengelola data pribadi, serta fitur Logout dan Hapus Akun.
+### 🔐 **Sistem Login**
+- Daftar/masuk dengan email dan password
+- Otomatis dibedakan antara pelanggan dan admin
+- Bisa reset password lewat email
 
-### Halaman Sisi Admin
-1.  **Dashboard Admin:** Halaman utama yang menampilkan daftar pesanan masuk (`pesanan` baru) secara *real-time*.
-2.  **Detail Pesanan:** Halaman yang menampilkan rincian lengkap dari sebuah pesanan yang dipilih.
-3.  **Manajemen Menu (CRUD):** Halaman untuk menambah, mengubah, dan menghapus item di koleksi `menu`.
-4.  **Profil Admin:** Halaman sederhana untuk admin melakukan Logout.
+## Cara Install & Jalankan
 
----
+**Yang perlu disiapkan:**
+- Flutter SDK (versi 3.x.x ke atas)
+- Android Studio atau VS Code
 
-## Persiapan & Instalasi
+### Langkah-langkah:
 
-Pastikan Anda sudah menginstal Flutter SDK (versi 3.x.x atau lebih baru).
-
-### Langkah-langkah
-1.  **Clone repository ini:**
+1.  **Download kode:**
     ```bash
-    git clone [https://github.com/NAMA_USER_ANDA/nama-repo-anda.git](https://github.com/NAMA_USER_ANDA/nama-repo-anda.git)
+    git clone https://github.com/Azhriler7/flutter-mycafe.git
+    cd flutter-mycafe/mycafe
     ```
-2.  **Masuk ke direktori proyek:**
-    ```bash
-    cd nama-repo-anda
-    ```
-3.  **Setup Firebase:**
-    * Proyek ini menggunakan Firebase. File konfigurasi `google-services.json` **tidak disertakan** di repository.
-    * Setiap anggota tim harus membuat proyek Firebase sendiri untuk development.
-    * Jalankan `flutterfire configure` dan hubungkan ke proyek Firebase Anda (pilih platform **Android** dan **Web**).
-    * Aktifkan layanan: **Authentication (Email/Password)** dan **Firestore Database**.
 
-4.  **Install dependensi:**
+2.  **Install dependencies:**
     ```bash
     flutter pub get
     ```
-5.  **Jalankan aplikasi:**
+
+3.  **Jalankan aplikasi:**
     ```bash
-    flutter run -d chrome  # Untuk Web
-    flutter run            # Untuk Android
+    flutter run -d chrome    # Untuk Web
+    flutter run              # Untuk Android
     ```
 
-### Dependensi Utama
-* **`firebase_core`**, **`firebase_auth`**, **`cloud_firestore`**, **`provider`**, **`intl`**.
+**Catatan:** Proyek sudah include konfigurasi Firebase, jadi bisa langsung dijalankan tanpa setup tambahan.
 
----
+## Teknologi yang Dipakai
 
-## Alur Kerja Git & Kontribusi Kode
+- **Flutter**: Framework untuk buat app Android & Web
+- **GetX**: Untuk mengatur state/data di app
+- **Firebase**: Database dan sistem login
+- **Dart**: Bahasa pemrograman Flutter
 
-Semua pekerjaan harus dilakukan di *branch* terpisah untuk menjaga *branch* `main` tetap stabil.
+### Library Utama:
+```yaml
+firebase_core & firebase_auth  # Sistem login
+cloud_firestore               # Database real-time  
+get                          # State management
+intl                         # Format mata uang
+```
 
-1.  **Update `main`:** `git checkout main` lalu `git pull origin main`.
-2.  **Buat Branch Baru:** `git checkout -b feature/nama-fitur-baru`.
-3.  **Kerjakan Kode & Commit:** `git add .` lalu `git commit -m "pesan commit"`.
-4.  **Push Branch:** `git push -u origin feature/nama-fitur-baru`.
-5.  **Buat Pull Request** di GitHub untuk di-review.
+## Panduan Kontribusi
 
----
+jika ingin menambahkan fitur:
 
-## Struktur Database (Firestore)
+1. **Update kode terbaru:** `git checkout main` lalu `git pull origin main`
+2. **Buat branch baru:** `git checkout -b feature/nama-fitur-baru`  
+3. **Coding & commit:** `git add .` lalu `git commit -m "pesan commit"`
+4. **Upload:** `git push -u origin feature/nama-fitur-baru`
+5. **Buat Pull Request** di GitHub
 
-Ini adalah "kontrak" data final antara Backend dan Frontend.
+**Aturan:** Jangan langsung edit di branch `main`, selalu bikin branch baru!
+
+## Database (Firestore)
+
+Ini adalah struktur data final antara Backend dan Frontend.
 
 ### Koleksi: `users`
-* **Tujuan:** Menyimpan data profil pengguna.
+* **Tujuan:** Menyimpan data profil pengguna dan role access.
 * **ID Dokumen:** `UID` dari Firebase Authentication.
 * **Fields:** `username` (String), `email` (String), `gender` (String), `createdAt` (Timestamp), `isAdmin` (Boolean).
 
 ### Koleksi: `menu`
-* **Tujuan:** Menyimpan **semua** item menu yang bisa dipesan dan dikelola oleh admin.
+* **Tujuan:** Menyimpan semua item menu yang bisa dipesan dan dikelola oleh admin.
 * **ID Dokumen:** Auto-ID oleh Firestore.
 * **Fields:** `namaMenu` (String), `harga` (Number), `kategori` (String), `isTersedia` (Boolean).
 
 ### Koleksi: `pesanan`
-* **Tujuan:** Menyimpan data setiap pesanan yang sudah final.
+* **Tujuan:** Menyimpan data setiap pesanan yang sudah final dan di-submit.
 * **ID Dokumen:** Auto-ID oleh Firestore.
-* **Fields:** `userId` (String), `namaPemesan` (String), `noMeja` (String), `items` (Array of Maps), `totalHarga` (Number), `statusPesanan` (String: 'baru', 'selesai'), `waktuPesan` (Timestamp).
----
-
-## Pengisian Data ke Firestore
-Sebelum mengisi data, pastikan terlebih dahulu [Firestore Rules](https://console.firebase.google.com/u/0/project/_/firestore/rules) pada projek Anda telah disesuaikan untuk mengizinkan akses bagi pengguna yang telah login:
-```bash
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Izinkan semua pengguna yang terautentikasi untuk membaca dan menulis
-    // di semua koleksi untuk sementara waktu.
-    match /{document=**} {
-      allow read, write: if request.auth != null;
-    }
-  }
-}
-```
-
-Setelah itu, data Firestore dapat diisi dengan dua cara berikut:
-
-### 1. Melalui Firebase Console (Manual)
-1. Buka [Firebase Console](https://console.firebase.google.com/)
-2. Pilih proyek Firebase yang terhubung ke aplikasi
-3. Masuk ke menu **Firestore Database**
-4. Klik **Start collection** → masukkan nama koleksi (contoh: `users`, `menu`, `pesanan`)
-5. Tambahkan dokumen baru dengan format sesuai contoh di atas:
-   - Klik **Add Document**
-   - Masukkan setiap field: nama, tipe data (String, Boolean, Number, Timestamp), dan nilainya
-   - Klik **Save**
-
-### 2. Melalui Aplikasi (Sebagai Admin)
-1. Login menggunakan akun admin:
-   - 📧 `admin@example.com`
-   - 🔒 `admin123`
-2. Buka halaman **Manajemen Menu**
-   - Tambah menu baru → otomatis akan disimpan ke koleksi `menu`
-3. Buat pesanan menggunakan akun user biasa
-   - Setelah checkout, data pesanan akan otomatis masuk ke koleksi `pesanan`
-4. Data akun akan masuk ke koleksi `users` saat registrasi berhasil
-
->  Pastikan koleksi `users`, `menu`, dan `pesanan` sudah dibuat, serta **Firestore rules** mengizinkan akses sesuai peran (admin/user).
 
 ---
 
@@ -200,11 +172,22 @@ waktuSelesai: 2025-07-29T07:47:34Z
 
 ---
 
-## Arsitektur & State Management
+## Struktur Kode
 
-Proyek ini menggunakan arsitektur **MVC (Model-View-Controller)**.
+Kode diatur dengan pola **MVC** (Model-View-Controller):
 
-* **Model:** Struktur data di dalam `lib/models/`.
-* **View:** Semua kode UI di dalam `lib/views/`.
-* **Controller:** Lapisan logika bisnis menggunakan paket **`provider`** sebagai solusi *state management*. Setiap *controller* akan dibuat menggunakan `ChangeNotifier`.
-* **Navigasi:** Menggunakan **`Navigator`** bawaan Flutter untuk perpindahan halaman.
+```
+lib/
+├── controller/     # Logika bisnis (GetX controllers)
+├── model/         # Model data 
+├── view/          # Tampilan UI
+│   ├── screen/    # Halaman-halaman app
+│   └── widget/    # Komponen UI yang bisa dipakai ulang
+└── main.dart      # File utama
+```
+
+**Yang perlu tahu:**
+- **Model**: Bentuk data (user, menu, pesanan)
+- **View**: Yang keliatan di layar
+- **Controller**: Yang ngatur data dan logika
+- **GetX**: Buat state management yang reactive (otomatis update UI kalau data berubah)
