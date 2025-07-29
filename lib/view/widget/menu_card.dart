@@ -66,11 +66,34 @@ class MenuCard extends StatelessWidget {
                         child: Image.asset(
                           imagePath!,
                           fit: BoxFit.cover,
+                          cacheWidth: 200, 
+                          cacheHeight: 200,
+                          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                            if (wasSynchronouslyLoaded || frame != null) {
+                              return child;
+                            }
+                            return Container(
+                              color: const Color.fromARGB(255, 245, 235, 220),
+                              child: const Center(
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Color.fromARGB(255, 78, 52, 46),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.fastfood,
-                              color: const Color.fromARGB(255, 78, 52, 46),
-                              size: 40,
+                            return Container(
+                              color: const Color.fromARGB(255, 245, 235, 220),
+                              child: const Icon(
+                                Icons.fastfood,
+                                color: Color.fromARGB(255, 78, 52, 46),
+                                size: 40,
+                              ),
                             );
                           },
                         ),
