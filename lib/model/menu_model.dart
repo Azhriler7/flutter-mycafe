@@ -1,5 +1,3 @@
-// File: lib/model/menu_model.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MenuModel {
@@ -25,12 +23,12 @@ class MenuModel {
     return MenuModel(
       id: doc.id,
       namaMenu: data['namaMenu'] ?? 'Nama Menu',
-      harga: data['harga'] ?? 18000, // harga default
+      harga: data['harga'] ?? 18000,
       kategori: data['kategori'] ?? 'Minuman',
       isTersedia: data['isTersedia'] ?? true,
       gambar:
           data['gambar'] ??
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP7PzXpj11ISpb2pI5WjxOaFayqiv2w4qZxA&s', // default gambar
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP7PzXpj11ISpb2pI5WjxOaFayqiv2w4qZxA&s',
     );
   }
 

@@ -29,7 +29,7 @@ class AdminMenuTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
       elevation: 4,
-      color: const Color(0xFF2A2A2A),
+      color: const Color.fromARGB(255, 78, 52, 46),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
@@ -60,16 +60,21 @@ class AdminMenuTile extends StatelessWidget {
             fontSize: 14,
           ),
         ),
-        trailing: TextButton(
+        trailing: ElevatedButton(
           onPressed: onEditPressed,
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.blue,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFC5A86A),
+            foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: const Text(
-            'Edit',
+            'Edit Menu',
             style: TextStyle(
               fontWeight: FontWeight.w500,
+              fontSize: 15,
             ),
           ),
         ),

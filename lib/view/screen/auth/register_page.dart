@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mycafe/controller/auth_controller.dart';
 import 'package:mycafe/view/screen/auth/auth_wrapper.dart';
-import 'package:provider/provider.dart';
 import 'package:get/get.dart';
+import 'package:mycafe/view/widget/custom_text_field.dart';
+import 'package:mycafe/view/widget/primary_button.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -27,11 +28,11 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  // Proses registrasi user baru
+  // Proses registrasi
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final authController = Provider.of<AuthController>(context, listen: false);
+    final authController = Get.find<AuthController>();
 
     final success = await authController.signUp(
       email: _emailController.text.trim(),
@@ -40,7 +41,6 @@ class _RegisterPageState extends State<RegisterPage> {
     
     if (mounted) {
       if (success) {
-        // Langsung masuk ke dashboard tanpa delay
         Get.offAll(() => const AuthWrapper());
         
         Get.snackbar(
@@ -53,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
       } else {
         Get.snackbar(
           'Error',
-          authController.errorMessage ?? 'Terjadi kesalahan',
+          authController.errorMessage.isEmpty ? 'Terjadi kesalahan' : authController.errorMessage,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -63,16 +63,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authController = context.watch<AuthController>();
-
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: const Color.fromARGB(255, 255, 248, 240),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(255, 255, 248, 240),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Color.fromARGB(255, 78, 52, 46)),
           onPressed: () => Get.back(),
+        ),
+          title: const Text(
+          'Buat Akun',
+          style: TextStyle(color: Color.fromARGB(255, 78, 52, 46)),
         ),
       ),
       body: SafeArea(
@@ -87,13 +89,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 78, 52, 46),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
                       Icons.person_add,
                       size: 48,
-                      color: Color(0xFF1A1A1A),
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -103,7 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 78, 52, 46),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -111,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     'Buat akun baru',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white70,
+                      color: Color.fromARGB(255, 78, 52, 46),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -121,134 +123,96 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(color: Color(0xFF1A1A1A)),
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        prefixIcon: Icon(Icons.email, color: Colors.grey),
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Email harus diisi';
-                        }
-                        return null;
-                      },
-                    ),
+                    child: CustomTextField(
+                    controller: _emailController,
+                    labelText: 'Email',
+                    prefixIcon: Icons.email,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Email harus diisi';
+                      }
+                      return null;
+                    },
+                  ),
                   ),
                   const SizedBox(height: 16),
-
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: TextFormField(
-                      controller: _passwordController,
-                      obscureText: !_isPasswordVisible,
-                      style: const TextStyle(color: Color(0xFF1A1A1A)),
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                        ),
-                        border: const OutlineInputBorder(borderSide: BorderSide.none),
+                    child: CustomTextField(
+                    controller: _passwordController,
+                    labelText: 'Password',
+                    prefixIcon: Icons.lock,
+                    isPassword: !_isPasswordVisible,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: const Color.fromARGB(255, 78, 52, 46),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password harus diisi';
-                        }
-                        if (value.length < 6) {
-                          return 'Password minimal 6 karakter';
-                        }
-                        return null;
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
                       },
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password harus diisi';
+                      }
+                      if (value.length < 6) {
+                        return 'Password minimal 6 karakter';
+                      }
+                      return null;
+                    },
                   ),
-                  const SizedBox(height: 16),
-
+                ),
+                const SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: TextFormField(
-                      controller: _confirmPasswordController,
-                      obscureText: !_isConfirmPasswordVisible,
-                      style: const TextStyle(color: Color(0xFF1A1A1A)),
-                      decoration: InputDecoration(
-                        labelText: 'Konfirmasi Password',
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
+                    child: CustomTextField(
+                    controller: _confirmPasswordController,
+                    isPassword: !_isConfirmPasswordVisible,
+                    labelText: 'Konfirmasi Password',
+                    prefixIcon: Icons.lock_outlined,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: const Color.fromARGB(255, 78, 52, 46),
+                      ),
+                      onPressed: () {
                             setState(() {
                               _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
                             });
                           },
-                        ),
-                        border: const OutlineInputBorder(borderSide: BorderSide.none),
-                      ),
-                      validator: (value) {
+                    ),
+                    validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Konfirmasi password harus diisi';
                         }
                         if (value != _passwordController.text) {
                           return 'Password tidak sama';
                         }
-                        return null;
-                      },
-                    ),
+                      return null;
+                    },
                   ),
+                ),
                   const SizedBox(height: 32),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: authController.isLoading ? null : _register,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4CAF50),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: authController.isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text(
-                              'Daftar',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
-                  ),
+                  
+                  Obx(() {
+                    final authController = Get.find<AuthController>();
+                    return PrimaryButton(
+                      text: 'Daftar',
+                      onPressed: _register,
+                      isLoading: authController.isLoading,
+                    );
+                  }),
+                  
                   const SizedBox(height: 24),
 
                   TextButton(
@@ -256,7 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: const Text(
                       'Sudah punya akun? Login',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: Color.fromARGB(255, 78, 52, 46),
                         fontSize: 16,
                       ),
                     ),

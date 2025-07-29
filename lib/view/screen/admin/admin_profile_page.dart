@@ -1,208 +1,299 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mycafe/controller/auth_controller.dart';
-import 'package:mycafe/view/screen/admin/admin_dashboard_page.dart';
-import 'package:mycafe/view/screen/admin/manajemen_menu_page.dart';
 import 'package:mycafe/view/screen/auth/reset_password_page.dart';
 import 'package:mycafe/view/screen/auth/delete_account_page.dart';
-import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:mycafe/view/screen/auth/auth_wrapper.dart';
+import 'package:mycafe/view/widget/drawer.dart';
+import 'package:mycafe/view/widget/primary_button.dart'; 
+import 'package:mycafe/view/widget/info_card.dart'; 
 
-class AdminProfilePage extends StatelessWidget {
+class AdminProfilePage extends StatefulWidget {
   const AdminProfilePage({super.key});
 
   @override
+  State<AdminProfilePage> createState() => _AdminProfilePageState();
+}
+
+class _AdminProfilePageState extends State<AdminProfilePage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+
+  String _username = '';
+  String _gender = '';
+  DateTime? _createdAt;
+
+  late TextEditingController _usernameController;
+  String _selectedGender = '';
+
+  bool _isLoading = true;
+  bool _isUpdating = false;
+  bool _isEditing = false;
+  bool _isProcessingAccountAction = false; 
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController = TextEditingController();
+    _loadUserData();
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    super.dispose();
+  }
+
+  // Muat data profil admin
+  Future<void> _loadUserData() async {
+    if (currentUser == null) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final doc = await _firestore.collection('users').doc(currentUser!.uid).get();
+      if (doc.exists) {
+        final data = doc.data()!;
+        setState(() {
+          _username = data['username'] ?? '';
+          _gender = data['gender'] ?? '';
+          _createdAt = (data['createdAt'] as Timestamp?)?.toDate();
+          _isLoading = false;
+          _usernameController.text = _username;
+          _selectedGender = _gender;
+        });
+      } else {
+        setState(() {
+          _username = '';
+          _gender = '';
+          _createdAt = null;
+          _isLoading = false;
+          _usernameController.text = '';
+          _selectedGender = '';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      Get.snackbar('Error', 'Gagal memuat data profil: ${e.toString()}');
+    }
+  }
+
+  // Update data profil admin
+  Future<void> _updateUserData({required String newUsername, required String newGender}) async {
+    if (currentUser == null) return;
+
+    setState(() {
+      _isUpdating = true;
+    });
+
+    try {
+      final doc = await _firestore.collection('users').doc(currentUser!.uid).get();
+      
+      if (doc.exists) {
+        await _firestore.collection('users').doc(currentUser!.uid).update({
+          'username': newUsername,
+          'gender': newGender,
+        });
+      } else {
+        await _firestore.collection('users').doc(currentUser!.uid).set({
+          'username': newUsername,
+          'email': currentUser!.email ?? '',
+          'gender': newGender,
+          'createdAt': Timestamp.now(),
+          'isAdmin': true, 
+        });
+      }
+
+      setState(() {
+        _username = newUsername;
+        _gender = newGender;
+        _isEditing = false;
+      });
+
+      Get.snackbar(
+        'Berhasil',
+        'Profil berhasil diperbarui',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal memperbarui profil: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      setState(() {
+        _isUpdating = false;
+      });
+    }
+  }
+
+  // Batal edit profil
+  void _cancelEdit() {
+    setState(() {
+      _isEditing = false;
+      _usernameController.text = _username;
+      _selectedGender = _gender;
+    });
+  }
+
+  // Handle aksi akun
+  Future<void> _handleAccountAction(VoidCallback action) async {
+    if (_isProcessingAccountAction) return;
+
+    setState(() {
+      _isProcessingAccountAction = true;
+    });
+
+    try {
+      action(); 
+    } finally {
+      setState(() {
+        _isProcessingAccountAction = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: const Color.fromARGB(255, 255, 248, 240),
       appBar: AppBar(
-        title: const Text('Profil Admin', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF1A1A1A),
         iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      drawer: Drawer(
-        backgroundColor: const Color(0xFF2C2C2C),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFF4CAF50)),
-              child: Text(
-                'Menu Admin', 
-                style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home_filled, color: Colors.white70),
-              title: const Text('Dashboard', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Get.back();
-                Get.to(() => const AdminDashboardPage());
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.restaurant_menu, color: Colors.white70),
-              title: const Text('Manajemen Menu', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Get.back();
-                Get.to(() => const ManajemenMenuPage());
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person, color: Colors.white70),
-              title: const Text('Profil', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Get.back();
-                Get.to(() => const AdminProfilePage());
-              },
-            ),
-            const Divider(color: Colors.white24),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.white70),
-              title: const Text('Logout', style: TextStyle(color: Colors.white)),
-              onTap: () async {
-                final authController = Provider.of<AuthController>(context, listen: false);
-                await authController.signOut();
-                
-                // Perintah ini melakukan hal yang sama: membuka halaman baru
-                // dan menghapus semua halaman sebelumnya.
-                Get.offAll(() => const AuthWrapper());
-              },
-            ),
-          ],
+        backgroundColor: const Color.fromARGB(255, 78, 52, 46),
+        elevation: 0,
+        title: const Text(
+          'Profile Admin',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(24.0),
-        children: [
-          if (currentUser != null) ...[
-            const Text(
-              'Informasi Akun',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+        actions: [
+          if (!_isLoading)
+            IconButton(
+              icon: Icon(_isEditing ? Icons.cancel : Icons.edit, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  _isEditing = !_isEditing;
+                  if (!_isEditing) {
+                    _usernameController.text = _username;
+                    _selectedGender = _gender;
+                  } else {
+                    _usernameController.text = _username;
+                    _selectedGender = _gender;
+                  }
+                });
+              },
+              tooltip: _isEditing ? 'Batal Edit' : 'Edit Profil',
             ),
-            const SizedBox(height: 16),
-            Card(
-              color: const Color(0xFF2C2C2C),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    _buildInfoRow(Icons.email, 'Email', currentUser.email ?? 'N/A'),
-                    const Divider(color: Colors.white24),
-                    _buildInfoRow(Icons.verified_user, 'Status Email', currentUser.emailVerified ? 'Terverifikasi' : 'Belum Terverifikasi'),
-                  ],
+        ],
+      ),
+      drawer: const AppDrawer(userRole: UserRole.admin),
+
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF4CAF50),
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.all(24.0),
+              children: [
+                if (currentUser != null) ...[
+                  const Text(
+                    'Informasi Akun',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 78, 52, 46),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  InfoCard(
+                    currentUser: currentUser,
+                    username: _username,
+                    gender: _gender,
+                    createdAt: _createdAt,
+                    isEditing: _isEditing,
+                    isUpdating: _isUpdating,
+                    usernameController: _usernameController,
+                    selectedGender: _selectedGender,
+                    onGenderChanged: (value) {
+                      setState(() {
+                        _selectedGender = value!;
+                      });
+                    },
+                    onSave: (newUsername, newGender) async {
+                      await _updateUserData(newUsername: newUsername, newGender: newGender);
+                    },
+                    onCancel: _cancelEdit,
+                  ),
+                  const SizedBox(height: 32),
+                ],
+
+                const Text(
+                  'Aksi Akun',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 78, 52, 46),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 32),
-          ],
+                const SizedBox(height: 16),
+                PrimaryButton(
+                  text: 'Reset Password',
+                  onPressed: _isProcessingAccountAction ? null : () {
+                    _handleAccountAction(() async {
+                      Get.to(() => const ResetPasswordPage());
+                    });
+                  },
+                  isLoading: _isProcessingAccountAction,
+                  buttonType: ButtonType.secondary,
+                ),
+                const SizedBox(height: 12),
+                PrimaryButton(
+                  text: 'Hapus Akun',
+                  onPressed: _isProcessingAccountAction ? null : () {
+                    _handleAccountAction(() async {
+                      Get.to(() => const DeleteAccountPage());
+                    });
+                  },
+                  isLoading: _isProcessingAccountAction,
+                  buttonType: ButtonType.primary,
+                ),
+                const SizedBox(height: 32),
+                PrimaryButton(
+                  text: 'Logout',
+                  onPressed: _isProcessingAccountAction ? null : () async {
+                    if (_isProcessingAccountAction) return;
+                    
+                    setState(() {
+                      _isProcessingAccountAction = true;
+                    });
 
-          const Text(
-            'Aksi Akun',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+                    try {
+                      final authController = Get.find<AuthController>();
+                      await authController.signOut();
+                      Get.offAll(() => const AuthWrapper());
+                    } finally {
+                      setState(() {
+                        _isProcessingAccountAction = false;
+                      });
+                    }
+                  },
+                  isLoading: _isProcessingAccountAction,
+                  buttonType: ButtonType.primary,
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
-          ),
-          const SizedBox(height: 16),
-          _buildActionButton(
-            context: context,
-            icon: Icons.lock_reset,
-            title: 'Reset Password',
-            onTap: () {
-              Get.to(() => const ResetPasswordPage());
-            },
-          ),
-          const SizedBox(height: 12),
-          _buildActionButton(
-            context: context,
-            icon: Icons.delete_forever,
-            title: 'Hapus Akun',
-            color: Colors.red,
-            onTap: () {
-               Get.to(() => const DeleteAccountPage());
-            },
-          ),
-          const SizedBox(height: 32),
-
-          ElevatedButton.icon(
-            onPressed: () async {
-              final authController = Provider.of<AuthController>(context, listen: false);
-              await authController.signOut();
-              
-              // Perintah ini melakukan hal yang sama: membuka halaman baru
-              // dan menghapus semua halaman sebelumnya.
-              Get.offAll(() => const AuthWrapper());
-            },
-            icon: const Icon(Icons.logout),
-            label: const Text('Logout'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  // Tampilkan baris informasi user
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white70, size: 20),
-          const SizedBox(width: 16),
-          Text(
-            '$label: ',
-            style: const TextStyle(color: Colors.white70, fontSize: 16),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Tombol aksi profil
-  Widget _buildActionButton({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    Color? color,
-    required VoidCallback onTap,
-  }) {
-    final actionColor = color ?? const Color(0xFF4CAF50);
-    return Card(
-      color: const Color(0xFF2C2C2C),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        onTap: onTap,
-        leading: Icon(icon, color: actionColor),
-        title: Text(title, style: TextStyle(color: actionColor, fontWeight: FontWeight.bold)),
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
-      ),
     );
   }
 }

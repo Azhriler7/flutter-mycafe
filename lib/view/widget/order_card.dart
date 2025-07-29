@@ -15,11 +15,11 @@ class OrderCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12.0),
       elevation: 4,
-      color: const Color(0xFF2A2A2A),
+      color: const Color(0xFF4E342E),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: Colors.grey,
+          color: Colors.white,
           width: 1,
         ),
       ),
@@ -29,17 +29,17 @@ class OrderCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'No meja: $noMeja',
+              'No Meja: $noMeja',
               style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
                 color: Colors.white,
               ),
             ),
             ElevatedButton(
               onPressed: onLihatDetailPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
+                backgroundColor: const Color(0xFFC5A86A),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(
@@ -49,8 +49,9 @@ class OrderCard extends StatelessWidget {
               child: const Text(
                 'Lihat Detail',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w500,
+                  color: Colors.white,
                 ),
               ),
             ),

@@ -3,8 +3,9 @@ import 'package:mycafe/controller/auth_controller.dart';
 import 'package:mycafe/view/screen/auth/register_page.dart';
 import 'package:mycafe/view/screen/auth/reset_password_page.dart';
 import 'package:mycafe/view/screen/auth/auth_wrapper.dart';
-import 'package:provider/provider.dart';
 import 'package:get/get.dart';
+import 'package:mycafe/view/widget/custom_text_field.dart';
+import 'package:mycafe/view/widget/primary_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,11 +27,11 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Proses login user
+  // Proses login
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final authController = Provider.of<AuthController>(context, listen: false);
+    final authController = Get.find<AuthController>();
 
     final success = await authController.signIn(
       email: _emailController.text.trim(),
@@ -39,7 +40,6 @@ class _LoginPageState extends State<LoginPage> {
     
     if (mounted) {
       if (success) {
-        // Langsung redirect ke dashboard tanpa delay
         Get.offAll(() => const AuthWrapper());
         
         Get.snackbar(
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         Get.snackbar(
           'Error',
-          authController.errorMessage ?? 'Terjadi kesalahan',
+          authController.errorMessage.isEmpty ? 'Terjadi kesalahan' : authController.errorMessage,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -62,10 +62,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authController = context.watch<AuthController>();
-
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: const Color.fromARGB(255, 255, 248, 240),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -76,15 +74,23 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    width: 120,
+                    height: 120,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
+                      color: const Color.fromARGB(255, 78, 52, 46),
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 78, 52, 46),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
                     ),
                     child: const Icon(
-                      Icons.lock,
-                      size: 48,
-                      color: Color(0xFF1A1A1A),
+                      Icons.coffee,
+                      size: 60,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -93,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 78, 52, 46),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -101,117 +107,63 @@ class _LoginPageState extends State<LoginPage> {
                     'Masuk ke akun Anda',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white70,
+                      color: Color.fromARGB(255, 78, 52, 46),
                     ),
                   ),
                   const SizedBox(height: 40),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(color: Color(0xFF1A1A1A)),
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        prefixIcon: Icon(Icons.email, color: Colors.grey),
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Email harus diisi';
-                        }
-                        return null;
-                      },
-                    ),
+                  CustomTextField(
+                    controller: _emailController,
+                    labelText: 'Email',
+                    prefixIcon: Icons.email,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Email harus diisi';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: TextFormField(
-                      controller: _passwordController,
-                      obscureText: !_isPasswordVisible,
-                      style: const TextStyle(color: Color(0xFF1A1A1A)),
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                        ),
-                        border: const OutlineInputBorder(borderSide: BorderSide.none),
+                  CustomTextField(
+                    controller: _passwordController,
+                    labelText: 'Password',
+                    prefixIcon: Icons.lock,
+                    isPassword: !_isPasswordVisible,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: const Color.fromARGB(255, 78, 52, 46),
                       ),
-                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password harus diisi';
-                        }
-                        return null;
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
                       },
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password tidak boleh kosong';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: authController.isLoading ? null : _login,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4CAF50),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: authController.isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text(
-                              'Login',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                    ),
-                  ),
+                  Obx(() {
+                    final authController = Get.find<AuthController>();
+                    return PrimaryButton(
+                      text: 'Login',
+                      onPressed: _login,
+                      isLoading: authController.isLoading,
+                    );
+                  }),
                   const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Get.to(() => const RegisterPage());
-                      },
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        side: const BorderSide(color: Colors.white, width: 2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Buat Akun',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
+                  PrimaryButton(
+                  text: 'Buat Akun',
+                  onPressed: () { 
+                    Get.to(() => const RegisterPage()); 
+                  },
+                  buttonType: ButtonType.secondary, 
+                ),
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
@@ -219,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     child: const Text(
                       'Lupa Password?',
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(color: Color.fromARGB(255, 78, 52, 46), fontSize: 16,),
                     ),
                   ),
                 ],

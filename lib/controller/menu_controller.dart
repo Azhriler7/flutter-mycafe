@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mycafe/model/menu_model.dart';
+import 'package:get/get.dart';
 
-class CafeMenuController with ChangeNotifier {
+class CafeMenuController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String _collectionPath = 'menus';
+  final String _collectionPath = 'menu';
 
   Stream<List<MenuModel>> getMenusStream() {
     return _firestore
@@ -54,7 +55,7 @@ class CafeMenuController with ChangeNotifier {
     }
   }
 
-  // Update data menu
+  // Update menu
   Future<void> updateMenu({
     required String docId,
     required String namaMenu,
@@ -75,7 +76,7 @@ class CafeMenuController with ChangeNotifier {
     }
   }
 
-  // Hapus beberapa menu sekaligus
+  // Hapus beberapa menu
   Future<void> deleteMenus(List<String> docIds) async {
     final batch = _firestore.batch();
     try {

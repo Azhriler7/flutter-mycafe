@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mycafe/controller/menu_controller.dart';
 import 'package:mycafe/view/widget/custom_text_field.dart';
 import 'package:mycafe/view/widget/primary_button.dart';
-import 'package:provider/provider.dart';
+import 'package:mycafe/view/screen/admin/manajemen_menu_page.dart';
 import 'package:get/get.dart';
 
 class CreateMenuPage extends StatefulWidget {
@@ -37,7 +37,7 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
       _isLoading = true;
     });
 
-    final menuController = Provider.of<CafeMenuController>(context, listen: false);
+    final menuController = Get.find<CafeMenuController>();
 
     try {
       await menuController.addMenu(
@@ -47,13 +47,15 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
       );
 
       if (mounted) {
+        // Kembali ke halaman manajemen menu
+        Get.off(() => const ManajemenMenuPage());
+        
         Get.snackbar(
           'Berhasil',
           'Menu baru berhasil ditambahkan.',
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        Get.back();
       }
     } catch (e) {
       if (mounted) {
@@ -76,11 +78,15 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: const Color.fromARGB(255, 255, 248, 240),
       appBar: AppBar(
-        title: const Text('Tambah Menu', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF1A1A1A),
+        title: const Text(
+          'Tambah Menu', 
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+        ),
+        backgroundColor: const Color.fromARGB(255, 78, 52, 46),
         iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0,
       ),
       
       body: Form(

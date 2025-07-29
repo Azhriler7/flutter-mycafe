@@ -1,4 +1,4 @@
-# Miscellaneous
+# Umum / Miscellaneous
 *.class
 *.log
 *.pyc
@@ -11,19 +11,18 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+coverage/
+.env
+.env.*
 
-# IntelliJ related
+# Konfigurasi IDE
 *.iml
 *.ipr
 *.iws
 .idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
 #.vscode/
 
-# Flutter/Dart/Pub related
+# Flutter/Dart/Pub Spesifik
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -32,24 +31,37 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+.packages
+*.g.dart
+*.freezed.dart
+*.gr.dart
 
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-
-# Firebase configuration files
-/android/app/google-services.json
-/ios/Runner/GoogleService-Info.plist
-
+# Android Spesifik
+/android/app/build/
+/android/build/
+/android/.gradle/
+/android/app/.cxx/
+/android/app/.externalNativeBuild/
+/android/app/src/main/assets/flutter_assets/
+/android/app/src/main/res/raw/
+android/local.properties
 /android/app/my-release-key.jks
 /android/key.properties
+/android/signing.properties
 
-firebase-option.txt
-firebase.json
+# iOS Spesifik
+ios/.symlinks/
+ios/.generated/
+ios/build/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/App.framework/
+ios/Flutter/Flutter.framework/
+ios/Pods/
+ios/Runner.xcworkspace/xcuserdata/
+
+# Web Spesifik
+/web/
+
+# Simbolisasi dan Obfuscation
+app.*.symbols
+app.*.map.json
