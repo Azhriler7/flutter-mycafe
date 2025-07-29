@@ -118,7 +118,7 @@ Ini adalah "kontrak" data final antara Backend dan Frontend.
 * **Fields:** `userId` (String), `namaPemesan` (String), `noMeja` (String), `items` (Array of Maps), `totalHarga` (Number), `statusPesanan` (String: 'baru', 'selesai'), `waktuPesan` (Timestamp).
 ---
 
-## 🛠️ Cara Mengisi Data ke Firestore
+## Cara Mengisi Data ke Firestore
 
 Data Firestore dapat diisi dengan dua cara berikut:
 
@@ -142,9 +142,9 @@ Data Firestore dapat diisi dengan dua cara berikut:
    - Setelah checkout, data pesanan akan otomatis masuk ke koleksi `pesanan`
 4. Data akun akan masuk ke koleksi `users` saat registrasi berhasil
 
-> 🔒 Pastikan koleksi `users`, `menu`, dan `pesanan` sudah dibuat, serta **Firestore rules** mengizinkan akses sesuai peran (admin/user).
+>  Pastikan koleksi `users`, `menu`, dan `pesanan` sudah dibuat, serta **Firestore rules** mengizinkan akses sesuai peran (admin/user).
 ---
-## 📄 Contoh Isi Dokumen Firestore
+## Contoh Isi Dokumen Firestore
 
 Berikut adalah contoh isi dari masing-masing dokumen dalam Firestore Database yang digunakan pada aplikasi ini, sesuai dengan struktur "kontrak data" yang telah didefinisikan.
 
