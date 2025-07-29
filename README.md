@@ -42,14 +42,14 @@ Akun User
 ## Apa yang bisa dilakukan?
 
 ### 👥 **Untuk Pelanggan**
-- **Melihat Menu**: Ada menu populer di halaman utama + menu lengkap dari database
+- **Melihat Menu**: Melihat menu populer di halaman utama + menu lengkap dari database
 - **Pesan**: Pilih menu, masukkan ke keranjang, atur jumlah
-- **Bayar**: Input nomor meja, upload bukti transfer, selesai!
+- **Bayar**: Input nomor meja, input bukti transfer, selesai
 - **Profil**: Edit nama, gender, ganti password, atau hapus akun
 
 ### 🛠️ **Untuk Admin** 
 - **Kelola Menu**: Tambah, edit, atau hapus menu
-- **Terima Pesanan**: Lihat pesanan baru dan tandai selesai
+- **Terima Pesanan**: Lihat pesanan baru dan tandai selesai, bisa melihat history pesanan juga
 - **Dashboard**: Monitor pesanan masuk secara real-time
 
 ### 🔐 **Sistem Login**
@@ -61,7 +61,7 @@ Akun User
 
 **Yang perlu disiapkan:**
 - Flutter SDK (versi 3.x.x ke atas)
-- Android Studio atau VS Code
+- Android Studio dan VS Code
 
 ### Langkah-langkah:
 
@@ -105,7 +105,7 @@ jika ingin menambahkan fitur:
 
 1. **Update kode terbaru:** `git checkout main` lalu `git pull origin main`
 2. **Buat branch baru:** `git checkout -b feature/nama-fitur-baru`  
-3. **Koding & commit:** `git add .` lalu `git commit -m "pesan commit"`
+3. **Coding & commit:** `git add .` lalu `git commit -m "pesan commit"`
 4. **Upload:** `git push -u origin feature/nama-fitur-baru`
 5. **Buat Pull Request** di GitHub
 
@@ -128,7 +128,6 @@ Ini adalah struktur data final antara Backend dan Frontend.
 ### Koleksi: `pesanan`
 * **Tujuan:** Menyimpan data setiap pesanan yang sudah final dan di-submit.
 * **ID Dokumen:** Auto-ID oleh Firestore.
-* **Fields:** `userId` (String), `namaPemesan` (String), `noMeja` (String), `items` (Array of Maps), `totalHarga` (Number), `statusPesanan` (String: 'baru', 'selesai'), `waktuPesan` (Timestamp), `buktiPembayaran` (String).
 
 ---
 
@@ -189,6 +188,6 @@ lib/
 
 **Yang perlu tahu:**
 - **Model**: Bentuk data (user, menu, pesanan)
-- **View**: Yang keliatan di layar
-- **Controller**: Yang ngatur data dan logika
-- **GetX**: Buat state management yang reactive (otomatis update UI kalau data berubah)
+- **View**: Tampilan UI aplikasi
+- **Controller**: Mengatur data dan logika
+- **GetX**: Untuk state management yang reactive (otomatis update UI kalau data berubah)
