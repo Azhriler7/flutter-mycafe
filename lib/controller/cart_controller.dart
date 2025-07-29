@@ -1,14 +1,16 @@
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mycafe/model/cart_model.dart';
 import 'package:mycafe/model/menu_model.dart';
 
-class CartController with ChangeNotifier {
-  final List<CartItemModel> _items = [];
+class CartController extends GetxController {
+  final RxList<CartItemModel> _items = <CartItemModel>[].obs;
 
   List<CartItemModel> get items => _items;
 
+  // Hitung total item
   int get totalItems => _items.fold(0, (sum, item) => sum + item.quantity);
 
+  // Hitung total harga
   double get totalPrice =>
       _items.fold(0, (sum, item) => sum + (item.menu.harga * item.quantity));
 
@@ -17,40 +19,37 @@ class CartController with ChangeNotifier {
     for (var item in _items) {
       if (item.menu.id == menu.id) {
         item.quantity++;
-        notifyListeners();
+        _items.refresh(); 
         return;
       }
     }
     _items.add(CartItemModel(menu: menu));
-    notifyListeners();
   }
 
   // Hapus item dari keranjang
   void removeFromCart(CartItemModel cartItem) {
     _items.remove(cartItem);
-    notifyListeners();
   }
 
   // Tambah jumlah item
   void incrementQuantity(CartItemModel cartItem) {
     cartItem.quantity++;
-    notifyListeners();
+    _items.refresh(); 
   }
 
   // Kurangi jumlah item
   void decrementQuantity(CartItemModel cartItem) {
     if (cartItem.quantity > 1) {
       cartItem.quantity--;
+      _items.refresh(); 
     } else {
       _items.remove(cartItem);
     }
-    notifyListeners();
   }
 
   // Kosongkan keranjang
   void clearCart() {
     _items.clear();
-    notifyListeners();
   }
 
   // Ambil jumlah berdasarkan menu
@@ -67,7 +66,7 @@ class CartController with ChangeNotifier {
     final index = _items.indexWhere((element) => element.menu.id == menu.id);
     if (index != -1) {
       _items[index].quantity++;
-      notifyListeners();
+      _items.refresh(); 
     }
   }
 
@@ -77,10 +76,72 @@ class CartController with ChangeNotifier {
     if (index != -1) {
       if (_items[index].quantity > 1) {
         _items[index].quantity--;
+        _items.refresh(); 
       } else {
         _items.removeAt(index);
       }
-      notifyListeners();
+    }
+  }
+
+  // Ambil jumlah berdasarkan nama menu
+  int getQuantityByName(String menuName) {
+    final item = _items.firstWhere(
+      (element) => element.menu.namaMenu == menuName,
+      orElse: () => CartItemModel(
+        menu: MenuModel(
+          id: menuName, 
+          namaMenu: menuName, 
+          harga: 0, 
+          kategori: 'static',
+          isTersedia: true,
+          gambar: ''
+        ), 
+        quantity: 0
+      ),
+    );
+    return item.quantity;
+  }
+
+  // Tambah item berdasarkan nama menu
+  void addToCartByName(String menuName, int price) {
+    for (var item in _items) {
+      if (item.menu.namaMenu == menuName) {
+        item.quantity++;
+        _items.refresh();
+        return;
+      }
+    }
+    _items.add(CartItemModel(
+      menu: MenuModel(
+        id: menuName,
+        namaMenu: menuName,
+        harga: price,
+        kategori: 'static',
+        isTersedia: true,
+        gambar: ''
+      )
+    ));
+  }
+
+  // Tambah jumlah berdasarkan nama menu
+  void incrementQuantityByName(String menuName) {
+    final index = _items.indexWhere((element) => element.menu.namaMenu == menuName);
+    if (index != -1) {
+      _items[index].quantity++;
+      _items.refresh();
+    }
+  }
+
+  // Kurangi jumlah berdasarkan nama menu
+  void decrementQuantityByName(String menuName) {
+    final index = _items.indexWhere((element) => element.menu.namaMenu == menuName);
+    if (index != -1) {
+      if (_items[index].quantity > 1) {
+        _items[index].quantity--;
+        _items.refresh();
+      } else {
+        _items.removeAt(index);
+      }
     }
   }
 }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "930596237188",
+    "project_id": "shop-app-37fc8",
+    "storage_bucket": "shop-app-37fc8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930596237188:android:3d1f4a8e92b82a823df7d1",
+        "android_client_info": {
+          "package_name": "com.example.mycafe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjakwycSiRcPBvFsQ96WvicE4K2aODVAU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930596237188:android:ae588a7273a347a93df7d1",
+        "android_client_info": {
+          "package_name": "com.example.shopapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjakwycSiRcPBvFsQ96WvicE4K2aODVAU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mycafe/controller/auth_controller.dart';
 import 'package:mycafe/view/screen/auth/login_page.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:mycafe/view/widget/custom_text_field.dart';
+import 'package:mycafe/view/widget/confirmation_dialog.dart';
 
 class DeleteAccountPage extends StatefulWidget {
   const DeleteAccountPage({super.key});
@@ -23,41 +24,33 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
     super.dispose();
   }
 
-  // Konfirmasi hapus akun user
+  // Konfirmasi hapus akun
   Future<void> _showDeleteConfirmation() async {
     if (!_formKey.currentState!.validate()) return;
     
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF2A2A2A),
-          title: const Text('Konfirmasi Hapus Akun', style: TextStyle(color: Colors.white)),
-          content: const Text(
-            'Apakah Anda yakin? Tindakan ini tidak dapat dibatalkan.',
-            style: TextStyle(color: Colors.white70),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Batal', style: TextStyle(color: Colors.grey)),
-              onPressed: () => Get.back(),
-            ),
-            TextButton(
-              child: const Text('Hapus Akun', style: TextStyle(color: Colors.red)),
-              onPressed: () {
-                Get.back();
-                _deleteAccount();
-              },
-            ),
-          ],
+        return ConfirmationDialog(
+          title: 'Konfirmasi Hapus Akun',
+          message: 'Apakah Anda yakin? Tindakan ini tidak dapat dibatalkan.',
+          icon: Icons.warning,
+          confirmText: 'Hapus Akun',
+          cancelText: 'Batal',
+          confirmColor: Colors.red,
+          onCancel: () => Get.back(),
+          onConfirm: () {
+            Get.back();
+            _deleteAccount();
+          },
         );
       },
     );
   }
 
-  // Hapus akun user
+  // Hapus akun
   Future<void> _deleteAccount() async {
-    final authController = Provider.of<AuthController>(context, listen: false);
+    final authController = Get.find<AuthController>();
 
     final success = await authController.deleteAccount(
       password: _passwordController.text,
@@ -65,7 +58,6 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
     
     if (mounted) {
       if (success) {
-        // Langsung redirect ke login page tanpa delay
         Get.offAll(() => const LoginPage());
         
         Get.snackbar(
@@ -78,7 +70,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       } else {
         Get.snackbar(
           'Error',
-          authController.errorMessage ?? 'Terjadi kesalahan',
+          authController.errorMessage.isEmpty ? 'Terjadi kesalahan' : authController.errorMessage,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -88,19 +80,21 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authController = context.watch<AuthController>();
     final currentUser = FirebaseAuth.instance.currentUser;
     
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: const Color.fromARGB(255, 255, 248, 240),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Color.fromARGB(255, 78, 52, 46)),
           onPressed: () => Get.back(),
         ),
-        title: const Text('Hapus Akun', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Hapus Akun',
+          style: TextStyle(color: Color.fromARGB(255, 78, 52, 46)),
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -111,20 +105,49 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.warning, size: 64, color: Colors.red),
-                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 78, 52, 46),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.warning,
+                      size: 48,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
                   
-                  const Text('Hapus Akun', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
+                  const Text(
+                    'Hapus Akun',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 78, 52, 46),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   const Text(
                     'Tindakan ini akan menghapus akun dan semua data Anda secara permanen.',
-                    style: TextStyle(fontSize: 16, color: Colors.white70),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(255, 78, 52, 46),
+                    ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 40),
-                  Text(
-                    'Email: ${currentUser?.email ?? 'Tidak diketahui'}',
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  const SizedBox(height: 32),
+
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      'Email: ${currentUser?.email ?? 'Tidak diketahui'}',
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 78, 52, 46),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 24),
 
@@ -133,26 +156,21 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: TextFormField(
+                    child: CustomTextField(
                       controller: _passwordController,
-                      obscureText: !_isPasswordVisible,
-                      style: const TextStyle(color: Color(0xFF1A1A1A)),
-                      decoration: InputDecoration(
-                        labelText: 'Konfirmasi Password Anda',
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
+                      labelText: 'Konfirmasi Password Anda',
+                      isPassword: !_isPasswordVisible,
+                      prefixIcon: Icons.lock,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                          color: const Color.fromARGB(255, 78, 52, 46),
                         ),
-                        border: const OutlineInputBorder(borderSide: BorderSide.none),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -164,30 +182,41 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                   ),
                   const SizedBox(height: 32),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: authController.isLoading ? null : _showDeleteConfirmation,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: authController.isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                strokeWidth: 2,
+                  Obx(() {
+                    final authController = Get.find<AuthController>();
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: authController.isLoading ? null : _showDeleteConfirmation,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 78, 52, 46),
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey.shade400,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 2,
+                        ),
+                        child: authController.isLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'HAPUS AKUN',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            )
-                          : const Text(
-                              'HAPUS AKUN',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                    ),
-                  ),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),

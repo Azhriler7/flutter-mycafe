@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mycafe/controller/auth_controller.dart';
-import 'package:provider/provider.dart';
 import 'package:get/get.dart';
+import 'package:mycafe/view/widget/custom_text_field.dart';
+import 'package:mycafe/view/widget/primary_button.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -20,11 +21,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     super.dispose();
   }
 
-  // Reset password user
+  // Proses reset password
   Future<void> _resetPassword() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final authController = Provider.of<AuthController>(context, listen: false);
+    final authController = Get.find<AuthController>();
 
     final success = await authController.resetPassword(
       email: _emailController.text.trim(),
@@ -32,7 +33,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     
     if (mounted) {
       if (success) {
-        // Kembali ke halaman sebelumnya tanpa delay
         Get.back();
         
         Get.snackbar(
@@ -45,7 +45,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       } else {
         Get.snackbar(
           'Error',
-          authController.errorMessage ?? 'Terjadi kesalahan',
+          authController.errorMessage.isEmpty ? 'Terjadi kesalahan' : authController.errorMessage,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -55,20 +55,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authController = context.watch<AuthController>();
-
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: const Color.fromARGB(255, 255, 248, 240),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Color.fromARGB(255, 78, 52, 46)),
           onPressed: () => Get.back(),
         ),
         title: const Text(
           'Reset Password',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Color.fromARGB(255, 78, 52, 46)),
         ),
       ),
       body: SafeArea(
@@ -83,13 +81,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 78, 52, 46),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
                       Icons.lock_reset,
                       size: 48,
-                      color: Color(0xFF1A1A1A),
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -99,7 +97,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 78, 52, 46),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -107,7 +105,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     'Masukkan email untuk reset password',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white70,
+                      color: Color.fromARGB(255, 78, 52, 46),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -116,7 +114,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     'Note: Email mungkin saja masuk ke spam',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.orange,
+                      color: Color.fromARGB(255, 78, 52, 46),
                       fontStyle: FontStyle.italic,
                     ),
                     textAlign: TextAlign.center,
@@ -128,16 +126,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: TextFormField(
+                    child: CustomTextField(
                       controller: _emailController,
+                      labelText: 'Email',
+                      prefixIcon: Icons.email,
                       keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(color: Color(0xFF1A1A1A)),
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        prefixIcon: Icon(Icons.email, color: Colors.grey),
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Email tidak boleh kosong';
@@ -148,36 +141,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                   const SizedBox(height: 32),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: authController.isLoading ? null : _resetPassword,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4CAF50),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: authController.isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text(
-                              'Kirim Email Reset',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
-                  ),
+                  Obx(() {
+                    final authController = Get.find<AuthController>();
+                    return PrimaryButton(
+                      text: 'Kirim Email Reset',
+                      onPressed: _resetPassword,
+                      isLoading: authController.isLoading,
+                    );
+                  }),
                 ],
               ),
             ),

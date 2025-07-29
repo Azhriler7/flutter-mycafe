@@ -19,7 +19,6 @@ class PesananItemModel {
     );
   }
 
-  // Helper method untuk convert ke int
   static int _parseInt(dynamic value) {
     if (value == null) return 0;
     if (value is int) return value;
@@ -38,6 +37,7 @@ class PesananModel {
   final int totalHarga;
   final String statusPesanan;
   final Timestamp waktuPesan;
+  final Timestamp? waktuSelesai;
 
   PesananModel({
     required this.id,
@@ -48,6 +48,7 @@ class PesananModel {
     required this.totalHarga,
     required this.statusPesanan,
     required this.waktuPesan,
+    this.waktuSelesai,
   });
 
   factory PesananModel.fromFirestore(DocumentSnapshot doc) {
@@ -63,7 +64,7 @@ class PesananModel {
             }
           }
         } catch (e) {
-          // Continue without this item
+          // Handle error
         }
       }
 
@@ -76,6 +77,7 @@ class PesananModel {
         totalHarga: _parseInt(data['totalHarga']),
         statusPesanan: _parseString(data['statusPesanan']),
         waktuPesan: data['waktuPesan'] as Timestamp? ?? Timestamp.now(),
+        waktuSelesai: data['waktuSelesai'] as Timestamp?,
       );
     } catch (e) {
       return PesananModel(
@@ -87,11 +89,11 @@ class PesananModel {
         totalHarga: 0,
         statusPesanan: 'error',
         waktuPesan: Timestamp.now(),
+        waktuSelesai: null,
       );
     }
   }
 
-  // Helper methods untuk type conversion
   static String _parseString(dynamic value) {
     if (value == null) return '';
     return value.toString();

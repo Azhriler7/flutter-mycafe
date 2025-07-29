@@ -8,6 +8,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final IconData? prefixIcon;
+  final Widget? suffixIcon;
 
   const CustomTextField({
     super.key,
@@ -18,39 +19,45 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.validator,
     this.prefixIcon,
+    this.suffixIcon,
   });
 
   @override
   Widget build(BuildContext context) {
+    const Color brownColor = Color(0xFF4E342E);
+
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
       validator: validator,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: brownColor, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
-        labelStyle: const TextStyle(color: Colors.grey),
-        hintStyle: const TextStyle(color: Colors.grey),
-        prefixIcon: prefixIcon != null 
-            ? Icon(prefixIcon, color: Colors.grey) 
+        labelStyle: TextStyle(color: Colors.grey[700]),
+        hintStyle: TextStyle(color: Colors.grey[500]),
+        
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, color: brownColor)
             : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.grey),
-        ),
+        suffixIcon: suffixIcon,
+
+        contentPadding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 20.0),
+
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.grey),
+          borderSide: BorderSide(color: brownColor),
         ),
+
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(
-            color: Colors.blue,
+            color: brownColor,
             width: 2,
           ),
         ),
+        
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.red),
@@ -62,8 +69,9 @@ class CustomTextField extends StatelessWidget {
             width: 2,
           ),
         ),
+        
         filled: true,
-        fillColor: const Color(0xFF2A2A2A),
+        fillColor: Colors.white,
       ),
     );
   }
