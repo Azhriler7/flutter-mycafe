@@ -38,16 +38,12 @@ class CafeMenuController extends GetxController {
   Future<void> addMenu({
     required String namaMenu,
     required int harga,
-    required String kategori,
-    String? gambar,
   }) async {
     try {
       await _firestore.collection(_collectionPath).add({
         'namaMenu': namaMenu,
         'harga': harga,
-        'kategori': kategori.isNotEmpty ? kategori.toLowerCase() : 'lainnya',
         'isTersedia': true,
-        'gambar': gambar ?? '',
       });
       debugPrint("✅ Menu '$namaMenu' berhasil ditambahkan ke Firestore");
     } catch (e) {
@@ -60,15 +56,11 @@ class CafeMenuController extends GetxController {
     required String docId,
     required String namaMenu,
     required int harga,
-    required String kategori,
-    String? gambar,
   }) async {
     try {
       await _firestore.collection(_collectionPath).doc(docId).update({
         'namaMenu': namaMenu,
         'harga': harga,
-        'kategori': kategori.isNotEmpty ? kategori.toLowerCase() : 'lainnya',
-        if (gambar != null) 'gambar': gambar,
       });
       debugPrint("✅ Menu '$namaMenu' berhasil diupdate (ID: $docId)");
     } catch (e) {

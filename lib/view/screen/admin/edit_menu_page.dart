@@ -19,7 +19,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
   final _formKey = GlobalKey<FormState>();
   final _namaController = TextEditingController();
   final _hargaController = TextEditingController();
-  final _kategoriController = TextEditingController();
   bool _isLoading = false;
   
   // Ambil data menu
@@ -30,7 +29,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
         final data = doc.data() as Map<String, dynamic>;
         _namaController.text = data['namaMenu'];
         _hargaController.text = data['harga'].toString();
-        _kategoriController.text = data['kategori'];
       }
     } catch (e) {
       if (mounted) {
@@ -57,7 +55,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
   void dispose() {
     _namaController.dispose();
     _hargaController.dispose();
-    _kategoriController.dispose();
     super.dispose();
   }
 
@@ -78,7 +75,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
         docId: widget.docId,
         namaMenu: _namaController.text,
         harga: int.parse(_hargaController.text),
-        kategori: _kategoriController.text,
       );
 
       if (mounted) {
@@ -157,13 +153,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
                       }
                       return null;
                     },
-                  ),
-                  const SizedBox(height: 24),
-                  CustomTextField(
-                    controller: _kategoriController,
-                    labelText: 'Kategori',
-                    hintText: 'ex: kopi (jika kosong akan menjadi "lainnya")',
-                    keyboardType: TextInputType.text,
                   ),
                   const SizedBox(height: 40),
                   PrimaryButton(

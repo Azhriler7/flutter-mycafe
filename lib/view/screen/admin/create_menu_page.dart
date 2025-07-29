@@ -16,14 +16,12 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
   final _formKey = GlobalKey<FormState>();
   final _namaController = TextEditingController();
   final _hargaController = TextEditingController();
-  final _kategoriController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
     _namaController.dispose();
     _hargaController.dispose();
-    _kategoriController.dispose();
     super.dispose();
   }
 
@@ -43,7 +41,6 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
       await menuController.addMenu(
         namaMenu: _namaController.text,
         harga: int.parse(_hargaController.text),
-        kategori: _kategoriController.text,
       );
 
       if (mounted) {
@@ -121,13 +118,6 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
                 }
                 return null;
               },
-            ),
-            const SizedBox(height: 24),
-            CustomTextField(
-              controller: _kategoriController,
-              labelText: 'Kategori',
-              hintText: 'ex: kopi (jika kosong akan menjadi "lainnya")',
-              keyboardType: TextInputType.text,
             ),
             const SizedBox(height: 40),
             PrimaryButton(
