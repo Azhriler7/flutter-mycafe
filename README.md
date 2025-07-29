@@ -6,6 +6,18 @@ Aplikasi ini memiliki sistem menu dinamis yang dikelola oleh admin dan alur pemb
 
 ---
 
+##Akun Uji Coba
+Untuk keperluan pengujian, gunakan akun berikut:
+
+Akun Admin
+📧 admin@example.com
+🔒 admin123
+
+Akun User
+📧 user@example.com
+🔒 user123
+
+---
 ## Daftar Isi
 1.  [Daftar Halaman Aplikasi](#daftar-halaman-aplikasi)
 2.  [Persiapan & Instalasi](#persiapan--instalasi)
